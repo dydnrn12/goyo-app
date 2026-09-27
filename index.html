@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#E9ECE4" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#111612" media="(prefers-color-scheme: dark)">
-<meta name="description" content="요일별 명상과 맨몸 운동 루틴">
+<meta name="description" content="요일별 명상과 맨몸 운동 루틴, 그리고 생각을 바로잡는 마음 도구">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icon-192.png">
 <link rel="apple-touch-icon" href="icon-192.png">
@@ -111,7 +111,7 @@ button:focus-visible,[tabindex]:focus-visible{outline:2px solid var(--moss);outl
 .legend i{width:12px;height:12px;border-radius:3px;display:inline-block}
 .sync{font-size:12px;color:var(--muted)}
 .tabbar{position:fixed;left:0;right:0;bottom:0;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-top:1px solid var(--line);padding:8px 16px calc(8px + env(safe-area-inset-bottom,0px));z-index:5}
-.tabbar nav{max-width:480px;margin:0 auto;display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.tabbar nav{max-width:480px;margin:0 auto;display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
 .tab{background:none;border:0;border-radius:12px;padding:8px 4px;display:flex;flex-direction:column;align-items:center;gap:2px;font-size:12px;color:var(--muted)}
 .tab[aria-selected="true"]{color:var(--ink);background:var(--surface)}
 .tab[aria-selected="true"] svg{color:var(--moss)}
@@ -155,6 +155,96 @@ button:focus-visible,[tabindex]:focus-visible{outline:2px solid var(--moss);outl
 .finish{margin-top:auto;display:flex;flex-direction:column;gap:8px}
 .finish .btn{width:100%;padding:14px}
 .toast{position:fixed;left:50%;bottom:calc(92px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:99px;font-size:14px;z-index:20;white-space:nowrap}
+
+textarea,input[type=text],input[type=number]{font:inherit;color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:10px 12px;width:100%;min-width:0}
+textarea{min-height:76px;resize:vertical;line-height:1.5}
+textarea:focus,input[type=text]:focus,input[type=number]:focus{outline:2px solid var(--moss);outline-offset:0;border-color:transparent}
+input[type=range]{width:100%;accent-color:var(--moss)}
+.hero{background:var(--moss);color:var(--on-accent);border-radius:18px;padding:18px;display:flex;flex-direction:column;gap:6px;border:0;text-align:left;width:100%;box-shadow:var(--shadow)}
+.hero b{font-family:var(--serif);font-size:22px}
+.hero span{font-size:13px;opacity:.92}
+.hero .go{align-self:flex-start;background:var(--on-accent);color:var(--moss);border-radius:99px;padding:7px 18px;font-weight:600;font-size:14px;opacity:1;margin-top:6px}
+.tgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.tool{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:12px;text-align:left;display:flex;flex-direction:column;gap:3px;min-width:0}
+.tool b{font-size:14px;font-weight:600}
+.tool span{font-size:12px;color:var(--muted);line-height:1.4}
+.tool .n{font-family:var(--mono);font-size:11px;color:var(--ochre)}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{border:1px solid var(--line);background:var(--surface);border-radius:99px;padding:6px 12px;font-size:13px;color:var(--ink)}
+.chip.on{background:var(--moss);border-color:var(--moss);color:var(--on-accent)}
+.sec-h{display:flex;justify-content:space-between;align-items:baseline;gap:10px;margin-bottom:-8px}
+.sec-h h3{margin:0;font-family:var(--serif);font-size:18px}
+.sec-h span{font-size:12px;color:var(--muted)}
+.card .sec-h{margin:0}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:14px 16px;display:flex;flex-direction:column;gap:10px}
+.hint{font-size:12px;color:var(--muted)}
+.lib details{border-bottom:1px solid var(--line);padding-block:12px}
+.lib summary{list-style:none;display:grid;grid-template-columns:28px 1fr auto;gap:10px;align-items:center;cursor:pointer}
+.lib summary::-webkit-details-marker,.item summary::-webkit-details-marker{display:none}
+.lib .no{font-family:var(--mono);font-size:12px;color:var(--muted)}
+.lib .nm{font-weight:600;font-size:14px}
+.lib .ct{font-size:11px;color:var(--muted)}
+.lib details[open] .ct:last-child{transform:rotate(45deg)}
+.lib .body{padding:8px 0 0 38px;display:flex;flex-direction:column;gap:8px;font-size:14px;color:var(--muted)}
+.lib ul{margin:0;padding-left:18px}
+.btn.sm{padding:7px 14px;font-size:13px}
+.card .btn,.mindtoday .btn{white-space:nowrap}
+.field{display:flex;flex-direction:column;gap:6px}
+.field label,.lbl{font-size:13px;font-weight:600;color:var(--ink)}
+.rng{display:grid;grid-template-columns:1fr 52px;gap:10px;align-items:center}
+.rng output{font-size:13px;text-align:right}
+.dots{display:flex;gap:4px}
+.dots i{flex:1;height:4px;border-radius:4px;background:var(--line)}
+.dots i.on{background:var(--moss)}
+.chat{display:flex;flex-direction:column;gap:8px}
+.bubble{background:var(--ochre-soft);color:var(--ink);border-radius:16px 16px 16px 4px;padding:10px 14px;font-size:15px;max-width:92%;align-self:flex-start}
+.bubble small{display:block;font-size:11px;color:var(--ochre);font-weight:600;letter-spacing:.04em;margin-bottom:2px}
+.bubble.me{background:var(--moss-soft);border-radius:16px 16px 4px 16px;align-self:flex-end}
+.bubble.me small{color:var(--moss)}
+.down{text-align:center;color:var(--muted);font-size:18px;line-height:1}
+.q{font-size:15px;color:var(--moss);font-weight:600}
+.cmp{display:flex;flex-direction:column;gap:10px}
+.cmp .row{display:grid;grid-template-columns:72px 1fr;gap:10px;align-items:center;font-size:13px}
+.cmp .bars{display:flex;flex-direction:column;gap:3px}
+.cmp .bars i{display:block;height:8px;border-radius:4px}
+.b0{background:var(--ochre)}.b1{background:var(--moss)}
+.pill{display:flex;gap:6px;align-items:center;font-size:12px;color:var(--muted)}
+.pill i{width:10px;height:10px;border-radius:3px;display:inline-block}
+.list{display:flex;flex-direction:column;gap:8px}
+.item{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:10px 12px;display:flex;flex-direction:column;gap:6px;font-size:14px}
+.item summary{list-style:none;cursor:pointer;display:flex;flex-direction:column;gap:2px}
+.top2,.row2{display:flex;justify-content:space-between;gap:8px;align-items:center}
+.top2{align-items:baseline}
+.item small{color:var(--muted);font-size:12px}
+.dbody{display:flex;flex-direction:column;gap:4px;padding-top:6px;font-size:13px;color:var(--muted)}
+.dbody p{margin:0}.dbody b{color:var(--ink);font-weight:600}
+.dbody .btn{align-self:flex-start;margin-top:4px}
+.iconbtn.sm{width:28px;height:28px;flex-shrink:0}
+.pts{display:flex;gap:4px}
+.pts button{width:34px;height:30px;border-radius:8px;border:1px solid var(--line);background:transparent;font-family:var(--mono);font-size:12px;color:var(--muted);padding:0}
+.pts button.on{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.addrow{display:grid;grid-template-columns:1fr auto;gap:8px}
+.addrow3{display:grid;grid-template-columns:1fr auto auto;gap:6px}
+.tri{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.tri label{font-size:11px;color:var(--muted);display:flex;flex-direction:column;gap:2px}
+.tri input{padding:6px 8px;font-family:var(--mono)}
+.span{position:relative;height:8px;background:var(--surface-2);border-radius:4px}
+.span i{position:absolute;top:0;height:100%;background:color-mix(in srgb,var(--moss) 45%,var(--surface-2));border-radius:4px}
+.span b{position:absolute;top:-3px;width:3px;height:14px;background:var(--ochre);border-radius:2px;margin-left:-1px}
+.big{font-family:var(--mono);font-size:40px;line-height:1;color:var(--moss)}
+.spark{display:flex;align-items:flex-end;gap:3px;height:44px}
+.spark i{flex:1;background:var(--moss-soft);border-radius:3px 3px 0 0}
+.spark i.t{background:var(--moss)}
+.verdict{background:var(--moss-soft);border-radius:14px;padding:12px 14px;font-size:14px}
+.verdict.warn{background:var(--ochre-soft)}
+.dlist{display:flex;flex-direction:column;gap:6px}
+.dist{display:flex;flex-direction:column;gap:1px;text-align:left;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:10px 12px}
+.dist b{font-size:14px}.dist span{font-size:12px;color:var(--muted)}
+.dist.on{border-color:var(--moss);background:var(--moss-soft)}
+.dist.on b{color:var(--moss)}
+.mindtoday{background:var(--surface);border:1px dashed var(--line);border-radius:16px;padding:14px 16px;display:flex;flex-direction:column;gap:6px}
+.mindtoday b{font-family:var(--serif);font-size:17px}
+.mindtoday .s{font-size:13px;color:var(--muted)}
 @media (prefers-reduced-motion: reduce){
 .orb{transition:none!important}
 .ring .fg{transition:none}
@@ -182,6 +272,7 @@ button:focus-visible,[tabindex]:focus-visible{outline:2px solid var(--moss);outl
 </div>
 <div class="sessions" id="sessions"></div>
 <div class="note" id="note"></div>
+<div id="mindToday"></div>
 </div>
 </section>
 <section id="view-plan" hidden>
@@ -212,6 +303,7 @@ button:focus-visible,[tabindex]:focus-visible{outline:2px solid var(--moss);outl
 <div class="sync" id="sync">이 폰에 저장됩니다</div>
 </div>
 </section>
+<section id="view-mind" hidden><div id="mindRoot" style="display:flex;flex-direction:column;gap:20px"></div></section>
 </div>
 <div class="tabbar">
 <nav role="tablist">
@@ -221,6 +313,8 @@ button:focus-visible,[tabindex]:focus-visible{outline:2px solid var(--moss);outl
 <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>주간 플랜</button>
 <button class="tab" role="tab" id="tab-log" data-v="log" aria-selected="false">
 <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>기록</button>
+<button class="tab" role="tab" id="tab-mind" data-v="mind" aria-selected="false">
+<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M9 21v-3.5A7 7 0 1 1 18 11c0 1.6.6 2.4 1.6 3.8L18 15.5V18h-3"/><path d="M10.5 9.5a2 2 0 1 1 2.5 1.9V13"/></svg>마음</button>
 </nav>
 </div>
 <div class="sheet" id="sheet" hidden><div class="sheet-in" id="sheetIn"></div></div>
@@ -405,7 +499,7 @@ if((ev.key==='Enter'||ev.key===' ')&&ev.target.matches('[data-open]')){ev.preven
 if(ev.key==='Escape'&&!$('sheet').hidden)closeSheet();
 });
 function showView(v){
-['today','plan','log'].forEach(x=>{$('view-'+x).hidden=x!==v;$('tab-'+x).setAttribute('aria-selected',x===v);});
+['today','plan','log','mind'].forEach(x=>{$('view-'+x).hidden=x!==v;$('tab-'+x).setAttribute('aria-selected',x===v);});
 try{localStorage.setItem('sns-tab',v);}catch(e){}
 window.scrollTo(0,0);
 }
@@ -414,7 +508,8 @@ function beep(f){try{actx=actx||new (window.AudioContext||window.webkitAudioCont
 async function lock(){try{if(navigator.wakeLock)wake=await navigator.wakeLock.request('screen');}catch(e){wake=null;}}
 function unlock(){try{wake&&wake.release();}catch(e){}wake=null;}
 function fmt(s){s=Math.max(0,Math.ceil(s));return String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0');}
-function closeSheet(){clearInterval(timer);timer=null;unlock();$('sheet').hidden=true;document.body.style.overflow='';}
+let sheetCleanup=null;
+function closeSheet(){clearInterval(timer);timer=null;unlock();if(sheetCleanup){try{sheetCleanup();}catch(e){}sheetCleanup=null;}$('sheetIn').onclick=null;$('sheetIn').oninput=null;$('sheetIn').onchange=null;$('sheetIn').onkeydown=null;$('sheet').hidden=true;document.body.style.overflow='';}
 const CLOSE='<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6l12 12M18 6 6 18"/></svg>';
 function openSession(key){
 const s=sessionsFor(selected.getDay()).find(x=>x.key===key);if(!s)return;
@@ -491,9 +586,432 @@ $('x').onclick=closeSheet;$('later').onclick=closeSheet;
 $('done').onclick=()=>{const was=(log[ymd(selected)]||{})[s.key];const mins=started?Math.max(1,Math.round((Date.now()-started)/60000)):w.min;
 toggle(s.key,true,was?0:mins);closeSheet();toast(w.title+' 완료');};
 }
+window.GOYO={ymd,addDays,fmt,beep,toast,showView,close:closeSheet,cleanup(f){sheetCleanup=f;},open(){$('sheetIn').onclick=null;$('sheetIn').oninput=null;$('sheetIn').onchange=null;$('sheetIn').onkeydown=null;if(sheetCleanup){try{sheetCleanup();}catch(e){}sheetCleanup=null;}$('sheet').hidden=false;document.body.style.overflow='hidden';$('sheet').scrollTop=0;}};
 try{const t=localStorage.getItem('sns-tab');if(t&&t!=='today')showView(t);}catch(e){}
 render();
 if('serviceWorker' in navigator){window.addEventListener('load',()=>{navigator.serviceWorker.register('sw.js').catch(()=>{});});}
+})();
+</script>
+<script>
+(function(){
+const G=window.GOYO;const $=id=>document.getElementById(id);
+const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,6);
+const KEY='goyo-mind';
+let M={entries:[],preds:[],counts:{},notes:[]};
+try{const s=localStorage.getItem(KEY);if(s)M=Object.assign(M,JSON.parse(s)||{});}catch(e){}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(M));}catch(e){}}
+const tday=()=>G.ymd(new Date());
+const md=ts=>{const d=new Date(ts);return (d.getMonth()+1)+'/'+d.getDate();};
+
+const DIST=[
+['aon','전부 아니면 전부','완벽하지 않으면 곧 실패라고 봅니다.'],
+['og','지나친 일반화','한 번 일어난 일을 "항상", "절대"로 넓힙니다.'],
+['mf','정신적 여과','나쁜 점 하나에만 초점을 맞춥니다.'],
+['dp','긍정적인 면 무시','잘한 일은 "별거 아냐"로 넘겨 버립니다.'],
+['mr','독심술','근거 없이 남이 나를 나쁘게 본다고 단정합니다.'],
+['fp','예언자적 말하기','일이 나쁘게 끝날 거라고 미리 확신합니다.'],
+['mag','극대화·극소화','단점은 부풀리고 장점은 줄여서 봅니다.'],
+['er','감정적 추리','"그렇게 느껴지니까 사실이야"라고 판단합니다.'],
+['sh','해야 한다는 생각','"~해야 해", "~하면 안 돼"로 나와 남을 몰아붙입니다.'],
+['lab','낙인찍기','"실수했다" 대신 "나는 패배자다"라고 말합니다.'],
+['sb','자기 비난','내 책임이 아닌 것까지 내 탓으로 돌립니다.'],
+['ob','타인 비난','내 몫은 보지 않고 전부 남 탓으로 돌립니다.']];
+const DN=Object.fromEntries(DIST.map(d=>[d[0],d[1]]));
+const MAP={aon:[10,14,4,5,9,13,19,21,17],og:[5,9,13,12,4,19,15,7],mf:[5,13,14,4,19,15,3],dp:[5,4,13,6,19,21],
+mr:[7,6,5,20,19,26],fp:[6,27,5,34,35,20,39],mag:[4,17,23,6,21,19,22],er:[6,5,3,19,4,28],
+sh:[11,29,4,21,25,9],lab:[12,13,14,11,21,19],sb:[8,4,21,29,19,13],ob:[8,47,48,49,26,50]};
+const EMO=['슬픔','불안','죄책감','수치심','무가치감','외로움','당황','절망','좌절','분노'];
+const VALUES=['책임감','높은 기준','사람을 아끼는 마음','정직함','현실을 보는 눈','성장하고 싶은 마음','나를 지키려는 마음','겸손함'];
+const BELIEFS=['완벽주의','남들이 완벽을 기대한다는 생각','성취 중독','인정 중독','사랑 중독','거절 공포','순종(남을 기쁘게 해야 함)','갈등 공포','특권 의식','자기 비난','타인 비난','진실 추구(내가 옳아야 함)','무가치감','절망감','스포트라이트 오류(모두가 날 본다)','감정 공포증'];
+const CATS={base:'기본 도구',comp:'동정심',fact:'사실 기반',logic:'논리 기반',sem:'의미론적',quant:'정량적',humor:'유머 기반',role:'역할극',phil:'철학·정신',vis:'시각 연상',disc:'발견하기',motiv:'동기 부여',expo:'노출',rel:'대인 관계'};
+const T=[
+{n:1,t:'긍정적 재구성',c:'base',d:'부정적인 감정을 적으로 보지 말고, 그 감정이 무엇을 지켜주는지, 나의 어떤 좋은 가치를 보여주는지 찾아봅니다.',q:['이 생각이나 감정이 나에게 주는 이점은?','이 감정은 나의 어떤 좋은 가치(책임감, 기준, 애정 등)를 보여주나요?']},
+{n:2,t:'마법 다이얼',c:'base',d:'감정을 0으로 없애는 대신, 좋은 점은 남기면서 견딜 만한 수준까지만 낮출 목표치를 정합니다.',q:['지금 감정의 강도는 몇 %인가요?','좋은 점은 지키면서 몇 %까지 낮추면 충분할까요?']},
+{n:3,t:'직설 기법',c:'base',d:'부정적인 생각을 더 현실적이고 나를 돕는 생각으로 바꿔 씁니다.',q:['이 생각은 100% 사실인가요?','나는 이 생각을 진심으로 믿나요?','같은 상황을 다르게 볼 수 있는 관점은?']},
+{n:4,t:'이중 기준 기법',c:'comp',d:'아끼는 친구가 똑같은 일을 겪었다면 뭐라고 말해줄지 떠올리고, 그 말을 나에게 해줍니다.',q:['친구가 같은 처지라면 이렇게 가혹하게 말할 건가요? 왜 아닌가요?','친구에게 해줄 말을 적어보세요. 그리고 그 말을 나에게 해주세요.']},
+{n:5,t:'증거 조사',c:'fact',d:'생각을 사실로 가정하지 말고, 뒷받침하는 증거와 반대 증거를 따져 봅니다.',q:['이 생각을 뒷받침하는 사실은?','반대되는 사실은?','사실들이 실제로 말해주는 것은?']},
+{n:6,t:'실험 기법',c:'fact',d:'과학자처럼, 생각이 맞는지 직접 확인할 수 있는 작은 실험을 설계합니다.',q:['이 생각이 맞다면 어떤 결과가 나와야 하나요?','오늘 해볼 수 있는 작은 실험은?','결과는 어땠나요?']},
+{n:7,t:'설문 기법',c:'fact',d:'내 생각이 현실적인지, 믿을 만한 사람들에게 직접 물어봅니다.',q:['누구에게 물어볼 수 있나요?','무엇을 물어볼 건가요?','사람들의 답은?']},
+{n:8,t:'재귀인',c:'fact',d:'모든 걸 내 탓(혹은 남 탓)으로 돌리지 말고, 문제를 만든 여러 요인을 나눠 봅니다.',q:['이 문제를 만든 요인들은?','그중 나의 몫은 몇 %쯤인가요?','다른 사람과 상황의 몫은?','여기서 배울 점은?']},
+{n:9,t:'소크라테스식 방법',c:'logic',d:'질문을 던져 생각 안의 모순을 스스로 드러냅니다.',q:['이 말은 "어떤 때 어떤 일"을 뜻하나요, "언제나 모든 일"을 뜻하나요?','"어떤 때"라면, 모든 사람이 다 그렇지 않나요?','"언제나"라면, 정말 그런 사람이 존재하나요?']},
+{n:10,t:'회색 음영으로 생각하기',c:'logic',d:'흑과 백 대신 회색의 정도로 봅니다. 부분적인 성공과 구체적인 실수를 찾습니다.',q:['몇 % 정도는 잘 됐나요?','잘 된 부분은?','고칠 수 있는 구체적인 실수는?']},
+{n:11,t:'의미론적 방법',c:'sem',d:'"~했어야 했어" 같은 날 선 말을 "~했다면 더 좋았을 텐데"처럼 부드러운 말로 바꿉니다.',q:['내 생각 속 "해야 한다/했어야" 문장을 적어보세요.','"~했다면 더 좋았을 텐데"로 바꿔 말하면?']},
+{n:12,t:'용어 정의',c:'sem',d:'"패배자", "바보" 같은 딱지의 정확한 정의를 써봅니다. 대개 제대로 정의할 수 없다는 게 드러납니다.',q:['내가 나에게 붙인 딱지는?','그 단어의 정의는? (누구에게나 적용할 수 있게)','그 정의에 정말 내가 해당하나요?']},
+{n:13,t:'구체적으로 생각하기',c:'sem',d:'나라는 사람 전체를 평가하지 말고, 구체적인 행동과 구체적인 장점·약점을 봅니다.',q:['전체 평가 대신, 구체적인 실수는?','구체적인 장점은?']},
+{n:14,t:'잘할 때, 못할 때, 보통일 때',c:'sem',k:'range',d:'"좋은 OO"의 특징 다섯 가지를 적고, 가장 잘할 때·못할 때·보통일 때 몇 점인지 매깁니다. 0점도 100점도 아니라는 걸 확인합니다.',q:['"좋은 OO"의 특징 다섯 가지는?','각각 잘할 때/못할 때/보통일 때 몇 점?','나아지고 싶은 한 영역과 계획은?']},
+{n:15,t:'자기 관찰',c:'quant',k:'counter',d:'부정적인 생각이 떠오를 때마다 횟수를 셉니다. 알아차림만으로 2~3주 만에 줄어드는 경우가 많습니다.',q:['오늘 몇 번 알아차렸나요?']},
+{n:16,t:'부정 실행/걱정 깨기',c:'quant',k:'worry',d:'걱정하고 자책하는 시간을 하루 몇 번, 5분씩 따로 정합니다. 그 외의 시간엔 "다음 걱정 시간에"라고 미뤄둡니다.',q:['지금 떠오르는 걱정은?']},
+{n:17,t:'역설적 극대화',c:'humor',d:'생각을 부정하지 않고 오히려 우스울 만큼 과장합니다. 정말 괴로운 순간엔 쓰지 않습니다.',q:['생각을 최대한 과장하면?','과장해보니 어떤 느낌인가요?']},
+{n:18,t:'수치심 깨기 훈련',c:'humor',k:'dare',d:'사람들 앞에서 일부러 살짝 바보 같은 일을 해봅니다. 세상은 끝나지 않고, 사람들은 생각보다 신경 쓰지 않습니다.',q:['해볼 도전은?','예상 불안과 실제 불안은?']},
+{n:19,t:'목소리 외재화',c:'role',k:'voices',d:'부정적인 생각을 "너는~"이라는 공격으로 듣고, "나는~"으로 방어합니다. 완승할 때까지 반복합니다. 가장 강력한 기법 중 하나입니다.',q:['부정적인 목소리가 "너는 ~"이라고 공격한다면?','"나는 ~"으로 방어하면?','결과는 완승인가요?']},
+{n:20,t:'무서운 상상',c:'role',d:'가장 두려운 비판자를 상상해 그 말에 맞서 봅니다. 두려움은 대개 머릿속에서 만든 허상입니다.',q:['가장 두려운 사람이 할 법한 가장 가혹한 말은?','차분하고 당당하게 대답한다면?']},
+{n:21,t:'수용 역설',c:'phil',d:'자기비판을 막으려 하지 말고, 그 안의 진실을 평온하게 받아들입니다. "맞아, 부족한 점이 많아. 그래서 배울 게 많지."',q:['비판 속 진실 한 조각은?','그걸 평온하게, 약간의 유머를 섞어 인정한다면?']},
+{n:22,t:'시간 투영',c:'vis',d:'회복한 미래의 나와 대화하거나, 과거에 상처 준 사람에게 하지 못한 말을 해봅니다.',q:['1년 뒤 회복한 내가 지금의 나에게 해줄 말은?','그때 하지 못했던 말은?']},
+{n:23,t:'우스운 상상',c:'vis',d:'화나 불안을 주는 대상을 웃긴 장면에 넣어 상상하며 긴장을 풉니다.',q:['나를 괴롭히는 대상을 가장 우스운 장면에 넣는다면?','그 장면을 떠올리니 기분이 어떤가요?']},
+{n:24,t:'인지 최면',c:'vis',d:'원래는 치료사와 함께하는 기법입니다. 나에 대한 부정적인 책을 없애고, 긍정적인 책을 펼쳐 읽는 장면을 떠올립니다.',q:['나에 대한 부정적인 책의 제목은?','그 책을 없애 버린다면 어떻게?','긍정적인 책의 첫 문장은?']},
+{n:25,t:'개인용 하향 화살표',c:'disc',k:'arrow-me',d:'"이게 사실이라면 왜 괴롭지?"를 반복해 내려가, 밑바닥의 자기 패배적 신념을 찾습니다.',q:['이 생각이 사실이라면, 왜 속상할까?','그건 나에게 어떤 의미일까?','바닥에 있는 신념은?']},
+{n:26,t:'대인 관계용 하향 화살표',c:'disc',k:'arrow-rel',d:'관계 문제에서 "그 사람은, 나는, 우리 관계는 어떤가?"를 반복해 묻고 숨은 신념을 찾습니다.',q:['이게 사실이라면 그 사람은 어떤 사람인가?','나는 어떤 사람인가?','우리는 어떤 관계인가?']},
+{n:27,t:'만약에 기법',c:'disc',k:'arrow-if',d:'불안용 하향 화살표. "만약 그렇다면 최악은?"을 반복해 가장 두려운 장면까지 간 뒤, 그 가능성을 따져 봅니다.',q:['만약 그렇다면 최악의 일은?','일어날 가능성은 몇 %?','그렇게 되면 받아들일 수 있을까?']},
+{n:28,t:'숨겨진 감정 기법',c:'disc',d:'불안 뒤에 피하고 있는 진짜 문제나 감정이 숨어 있지 않은지 살펴봅니다.',q:['불안에 집중하느라 외면하는 문제는?','내 진짜 기분은?','그 감정을 누구에게 어떻게 표현할 수 있을까?']},
+{n:29,t:'비용 편익 분석',c:'motiv',k:'cba',d:'부정적인 믿음, 감정, 습관의 이점과 손해를 나열하고 100점을 나눠 비교합니다. 역설적 버전은 장점만 적고 "그런데 왜 바꿔야 하지?"를 묻습니다.',q:['이점은?','손해는?','100점을 나눈다면?']},
+{n:30,t:'악마의 변호 기법',c:'motiv',k:'devil',d:'유혹하는 목소리(악마)에 즉시 반박하는 역할극입니다. 악마가 그럴듯할수록 연습 효과가 큽니다.',q:['나를 유혹하는 속삭임은?','즉시 반박한다면?']},
+{n:31,t:'자극 통제',c:'motiv',d:'습관과 싸우기보다 유혹 자체를 환경에서 치웁니다.',q:['나를 유혹하는 것은?','환경에서 치울 수 있는 것은?','오늘 바로 할 한 가지는?']},
+{n:32,t:'의사 결정 도구',c:'motiv',k:'decide',d:'두 선택지의 장점과 단점에 점수를 매겨 총점을 비교합니다. 결과에 집착할 필요는 없고, 편해질 때까지 여러 번 써도 됩니다.',q:['선택지 A와 B는?','각각의 장점과 단점은?']},
+{n:33,t:'일일 활동 시간표',c:'motiv',d:'하루 동안 한 일을 시간별로 적고, 만족도를 0~5로 매겨 어떤 활동에서 기분이 좋아지는지 찾습니다.',q:['오늘 시간대별로 한 일과 만족도(0~5)는?','가장 만족스러웠던 활동은?','내일 더 넣고 싶은 활동은?']},
+{n:34,t:'즐거움 예측 표',c:'motiv',k:'joy',d:'할 일의 만족도를 미리 예측하고, 해본 뒤 실제 만족도와 비교합니다. 대개 현실이 예측보다 낫습니다. 혼자 할 때와 함께할 때도 비교해 보세요.',q:['활동과 예상 만족도는?','실제 만족도는?']},
+{n:35,t:'미루지 않기 표',c:'motiv',k:'task',d:'미루던 일을 작은 단계로 쪼개고, 예상 난이도·만족도를 적은 뒤 해보고 실제와 비교합니다.',q:['미루던 일의 첫 단계는?','예상 난이도와 실제 난이도는?']},
+{n:36,t:'점진적 노출 및 홍수',c:'expo',k:'dare',d:'두려운 것에 조금씩(점진적) 혹은 한 번에(홍수) 다가가, 불안이 스스로 가라앉을 때까지 머무릅니다.',q:['두려운 상황의 단계는?','오늘 해볼 단계는?']},
+{n:37,t:'반응 저지',c:'expo',d:'확인하기, 씻기 같은 충동이 올 때 그 행동을 하지 않고 버텨 봅니다.',q:['참기 힘든 충동은?','오늘 참아볼 시간은?','참아보니 불안은 어떻게 변했나요?']},
+{n:38,t:'주의 분산',c:'expo',d:'불안할 때 퍼즐, 숫자 거꾸로 세기, 대화처럼 주의를 붙잡는 다른 활동으로 돌립니다.',q:['불안할 때 주의를 돌릴 활동 세 가지는?']},
+{n:39,t:'인지 홍수',c:'expo',d:'가장 두려운 장면을 머릿속에서 최대한 오래, 최대한 강하게 떠올립니다. 불안은 결국 스스로 지쳐 내려갑니다.',q:['떠올릴 가장 두려운 장면은?','시작할 때와 끝날 때의 불안(%)은?']},
+{n:40,t:'이미지 대체',c:'expo',d:'머릿속의 무서운 이미지를 평온하거나 긍정적인 이미지로 바꿔 끼웁니다.',q:['자꾸 떠오르는 무서운 이미지는?','대신 떠올릴 이미지는?']},
+{n:41,t:'기억 조정',c:'expo',d:'고통스러운 기억 속 장면을 상상 속에서 다시 찾아가, 내가 힘을 가진 모습으로 바꿔 봅니다.',q:['바꾸고 싶은 기억의 장면은?','그 장면에서 내가 힘을 가진다면?']},
+{n:42,t:'웃으며 인사하기 연습',c:'expo',k:'dare',d:'하루에 모르는 사람 몇 명에게 웃으며 인사해 봅니다. 대부분은 따뜻하게 돌려줍니다.',q:['오늘 몇 명에게?','반응은?']},
+{n:43,t:'토크쇼 진행자',c:'expo',k:'dare',d:'대화에서 나를 증명하려 하지 말고, 진행자처럼 상대에게 질문하고 관심을 둡니다.',q:['다음 대화에서 할 질문 세 가지는?']},
+{n:44,t:'자기 개방',c:'expo',k:'dare',d:'수줍음이나 긴장을 숨기지 않고 가볍게 털어놓습니다. 숨길 때보다 훨씬 편해집니다.',q:['털어놓을 한 문장은?','상대의 반응은?']},
+{n:45,t:'추파 던지기 훈련',c:'expo',k:'dare',d:'가벼운 농담과 칭찬으로 부담 없이 호감을 표현하는 연습입니다. 결과보다 장난스러운 태도가 핵심입니다.',q:['건넬 가벼운 칭찬이나 농담은?']},
+{n:46,t:'거절당하기 연습',c:'expo',k:'dare',d:'일부러 거절당할 만한 부탁을 해서, 거절이 생각만큼 끔찍하지 않다는 걸 몸으로 배웁니다.',q:['해볼 부탁은?','거절당했을 때 기분은?']},
+{n:47,t:'비난/관계 비용 편익 분석',c:'rel',k:'cba-blame',d:'상대를 탓할 때 얻는 은밀한 보상(옳다는 느낌, 우월감)과 그 대가를 솔직히 따져 봅니다.',q:['탓할 때 얻는 것은?','치르는 대가는?']},
+{n:48,t:'인간관계 일지',c:'rel',d:'상대가 한 말과 내가 한 대답을 적고, 내 대답이 문제를 키웠는지 살펴본 뒤 더 나은 대답을 다시 써봅니다.',q:['상대가 한 말 (그대로)','내가 한 대답 (그대로)','내 대답은 좋은 소통이었나? 문제를 키웠나?','다섯 가지 비결을 써서 다시 쓴 대답은?']},
+{n:49,t:'효과적인 의사소통 비결 다섯 가지',c:'rel',d:'무장 해제(상대 말 속 진실 인정), 공감(생각과 감정), 질문, "나는 ~하게 느껴" 전달법, 달래기(존중 표현).',q:['무장 해제: 상대 말에서 인정할 진실은?','공감: 상대의 생각과 감정을 요약하면?','질문: 더 알고 싶은 것은?','"나는 ~하게 느껴"로 말하면?','달래기: 상대에게 전할 존중이나 애정은?']},
+{n:50,t:'1분 훈련',c:'rel',d:'한 사람이 30초 말하면, 다른 사람은 판단 없이 그 생각과 감정을 요약해 돌려주고 말한 사람이 정확도를 매깁니다. 역할을 바꿔 반복합니다.',q:['상대가 한 말의 요약은?','상대가 느꼈을 감정은?','정확도(상대 평가)는?']}];
+const byN=n=>T.find(x=>x.n===n);
+const QUICK=[19,25,32,34,30,16,29,46];
+
+function toYou(s){return String(s).replace(/나는/g,'너는').replace(/내가/g,'네가').replace(/나를/g,'너를').replace(/나의/g,'너의').replace(/나한테/g,'너한테').replace(/나에게/g,'너에게').replace(/나도/g,'너도').replace(/(^|\s)난(\s)/g,'$1넌$2').replace(/(^|\s)내(\s)/g,'$1네$2');}
+const CLOSE='<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6l12 12M18 6 6 18"/></svg>';
+function sheet(eb,title,sub,body){
+G.open();$('sheetIn').innerHTML=`<div class="sheet-top"><div><div class="eyebrow">${eb}</div><h2>${title}</h2>${sub?`<p class="sub">${sub}</p>`:''}</div><button class="iconbtn" data-x aria-label="닫기">${CLOSE}</button></div>${body}`;
+$('sheetIn').querySelector('[data-x]').onclick=G.close;}
+function body(html){const top=$('sheetIn').querySelector('.sheet-top');$('sheetIn').innerHTML='';$('sheetIn').appendChild(top);$('sheetIn').insertAdjacentHTML('beforeend',html);}
+function rng(id,v,label){return `<div class="field"><label for="${id}">${label}</label><div class="rng"><input type="range" id="${id}" min="0" max="100" step="5" value="${v}"><output id="${id}o" class="num">${v}</output></div></div>`;}
+const val=id=>{const e=$(id);return e?e.value:'';};
+function addNote(n,title,pairs){M.notes.unshift({id:uid(),ts:Date.now(),n,title,pairs});save();G.toast('기록했습니다');renderMind();}
+function openTech(n){const t=byN(n);if(!t)return;const k=t.k;
+if(!k)return generic(t);
+if(k==='counter')return counterSheet(t);if(k==='worry')return worry(t);if(k==='range')return range(t);
+if(k==='voices')return voices(t);if(k.startsWith('arrow'))return arrow(k.slice(6),t);
+if(k==='cba')return cba('plain',t);if(k==='cba-blame')return cba('blame',t);if(k==='devil')return devil(t);
+if(k==='decide')return decide(t);if(k==='joy'||k==='task'||k==='dare')return pred(k,t);return generic(t);}
+
+/* ---------- generic ---------- */
+function generic(t){
+sheet(`${t.n}번 · ${CATS[t.c]}`,esc(t.t),esc(t.d),`<div class="block" style="gap:14px">${t.q.map((q,i)=>`<div class="field"><label for="gq${i}">${esc(q)}</label><textarea id="gq${i}"></textarea></div>`).join('')}</div>
+<div class="finish"><button class="btn primary" id="gsave">기록 저장</button></div>`);
+$('gsave').onclick=()=>{const p=t.q.map((q,i)=>[q,val('gq'+i).trim()]).filter(x=>x[1]);if(!p.length){G.toast('한 칸 이상 적어 주세요');return;}addNote(t.n,t.t,p);G.close();};}
+
+/* ---------- counter ---------- */
+function counterHTML(){
+const d=tday(),days=[];for(let i=13;i>=0;i--){const k=G.ymd(G.addDays(new Date(),-i));days.push([k,M.counts[k]||0]);}
+const mx=Math.max(3,...days.map(x=>x[1]));
+return `<div class="card"><div class="sec-h"><h3>생각 알아차림</h3><span>15번 · 자기 관찰</span></div>
+<div style="display:flex;align-items:center;justify-content:space-between;gap:12px"><div><div class="big" id="ctrN">${M.counts[d]||0}</div><span class="hint">오늘 부정적인 생각을 알아차린 횟수</span></div>
+<div style="display:flex;gap:8px;align-items:center"><button class="iconbtn" data-cnt="-1" aria-label="하나 빼기">−</button><button class="btn primary" data-cnt="1">+1</button></div></div>
+<div class="spark" aria-label="최근 14일 알아차림 횟수">${days.map((x,i)=>`<i class="${i===13?'t':''}" style="height:${Math.max(4,x[1]/mx*100)}%" title="${x[0]} · ${x[1]}회"></i>`).join('')}</div>
+<span class="hint">최근 14일. 떠오를 때마다 누르기만 하세요. 세다 보면 2~3주 안에 줄어드는 경우가 많습니다.</span></div>`;}
+function bump(n){const d=tday();M.counts[d]=Math.max(0,(M.counts[d]||0)+n);save();renderMind();if(!$('sheet').hidden&&$('ctrWrap'))$('ctrWrap').innerHTML=counterHTML();if(n>0)G.toast('알아차렸습니다. 그걸로 충분해요');}
+function counterSheet(t){sheet(`${t.n}번 · ${CATS[t.c]}`,esc(t.t),esc(t.d),`<div id="ctrWrap">${counterHTML()}</div>`);}
+
+/* ---------- worry ---------- */
+function worry(t){let left=300,iv=null,last=0;
+sheet(`${t.n}번 · ${CATS[t.c]}`,'걱정 시간 5분',esc(t.d),`<div class="breath" style="gap:12px"><div class="clock num" id="wc">05:00</div><div class="controls"><button class="btn ochre" id="wgo">걱정 시간 시작</button></div></div>
+<div class="field"><label for="wt">지금은 마음껏 걱정하고 자책해도 되는 시간입니다. 떠오르는 대로 적으세요.</label><textarea id="wt" style="min-height:150px"></textarea></div>
+<p class="sub">시간이 끝나면 걱정은 다음 걱정 시간으로 미룹니다. 하루 2~3번이면 충분합니다.</p>
+<div class="finish"><button class="btn primary" id="wsave">끝내고 기록</button></div>`);
+const stop=()=>{clearInterval(iv);iv=null;};G.cleanup(stop);
+$('wgo').onclick=()=>{if(iv){stop();$('wgo').textContent='계속';return;}if(left<=0)return;last=performance.now();
+iv=setInterval(()=>{const n=performance.now();left-=(n-last)/1000;last=n;$('wc').textContent=G.fmt(left);
+if(left<=0){stop();G.beep(432);$('wgo').textContent='끝';G.toast('걱정 시간 끝. 하던 일로 돌아가세요');}},250);$('wgo').textContent='일시정지';};
+$('wsave').onclick=()=>{const v=val('wt').trim();addNote(16,t.t,[[v?'걱정한 내용':'걱정 시간',v||'5분 사용']]);G.close();};}
+
+/* ---------- range (14) ---------- */
+function range(t){
+const S={role:'좋은 선생님',tr:['','','','',''].map(()=>({n:'',b:80,w:30,a:60})),plan:''};
+const ex=['설명을 쉽게 한다','학생 말을 끝까지 듣는다','준비를 꼼꼼히 한다','인내심을 가진다','약속을 지킨다'];
+sheet(`${t.n}번 · ${CATS[t.c]}`,esc(t.t),esc(t.d),'');
+function read(){if(!$('rrole'))return;S.role=val('rrole');S.tr.forEach((x,i)=>{x.n=val('rn'+i);x.b=+val('rb'+i)||0;x.w=+val('rw'+i)||0;x.a=+val('ra'+i)||0;});S.plan=val('rplan');}
+function draw(){body(`<div class="field"><label for="rrole">어떤 역할을 평가하나요?</label><input type="text" id="rrole" value="${esc(S.role)}" placeholder="예: 좋은 선생님, 좋은 아들"></div>
+<div class="lbl">"${esc(S.role||'좋은 OO')}"의 특징 다섯 가지와 점수 (0~100)</div>
+${S.tr.map((x,i)=>{const lo=Math.min(x.b,x.w,x.a),hi=Math.max(x.b,x.w,x.a);return `<div class="item"><input type="text" id="rn${i}" value="${esc(x.n)}" placeholder="${ex[i]}">
+<div class="tri"><label>잘할 때<input type="number" inputmode="numeric" min="0" max="100" id="rb${i}" value="${x.b}"></label><label>못할 때<input type="number" inputmode="numeric" min="0" max="100" id="rw${i}" value="${x.w}"></label><label>보통<input type="number" inputmode="numeric" min="0" max="100" id="ra${i}" value="${x.a}"></label></div>
+<div class="span"><i style="left:${lo}%;width:${hi-lo}%"></i><b style="left:${x.a}%"></b></div></div>`;}).join('')}
+<div class="verdict">어느 특징도 늘 0점이거나 늘 100점이지 않습니다. "나는 나쁜 ${esc((S.role||'OO').replace(/^좋은\s*/,''))}야"라는 말은 들쭉날쭉한 현실을 한 단어로 뭉갠 것입니다.</div>
+<div class="field"><label for="rplan">점수가 가장 낮은 영역 하나를 골라, 나아질 작은 계획을 적어보세요.</label><textarea id="rplan">${esc(S.plan)}</textarea></div>
+<div class="finish"><button class="btn primary" id="rsave">기록 저장</button></div>`);
+$('rsave').onclick=()=>{read();const p=[['역할',S.role]];S.tr.filter(x=>x.n).forEach(x=>p.push([x.n,`잘할 때 ${x.b} · 못할 때 ${x.w} · 보통 ${x.a}`]));if(S.plan)p.push(['계획',S.plan]);addNote(14,t.t,p);G.close();};}
+$('sheetIn').onchange=e=>{if(e.target.matches('input')){read();const y=$('sheet').scrollTop;draw();$('sheet').scrollTop=y;}};
+draw();}
+
+/* ---------- voices (19) ---------- */
+function voices(t){
+const last=M.entries[0];let th=[],idx=0,att=[],res=[];
+const REP=['그래도 ','솔직히 인정해. ','그건 변명이야. ','아니, ','웃기지 마. '];
+sheet(`${t.n}번 · ${CATS[t.c]}`,esc(t.t),esc(t.d),'');
+function start(){body(`<div class="field"><label for="vt">부정적인 생각을 한 줄에 하나씩 적으세요. "나는 ~" 형태가 좋습니다.</label><textarea id="vt" style="min-height:120px" placeholder="나는 쓸모없는 인간이야&#10;나는 이번에도 망칠 거야">${last?esc(last.thought):''}</textarea></div>
+<p class="sub">원래는 두 사람이 함께합니다. 여기서는 앱이 부정적인 목소리를 맡아 당신의 생각을 "너는~"으로 읽어 줍니다. 당신은 "나는~"으로 방어하세요.</p>
+<div class="finish"><button class="btn primary" id="vgo">대결 시작</button></div>`);
+$('vgo').onclick=()=>{th=val('vt').split('\n').map(s=>s.trim()).filter(Boolean);if(!th.length){G.toast('생각을 한 줄 이상 적어 주세요');return;}idx=0;att=[];res=[];round();};}
+function round(){const cur=th[idx];
+body(`<div class="dots">${th.map((_,i)=>`<i class="${i<=idx?'on':''}"></i>`).join('')}</div>
+<div class="chat"><div class="bubble"><small>부정적인 목소리</small>${esc(toYou(cur))}</div>
+${att.map((a,i)=>`<div class="bubble me"><small>나 · ${['','짐','간신히 이김','크게 이김','완승'][a.r]}</small>${esc(a.d)}</div><div class="bubble"><small>부정적인 목소리</small>${esc(REP[i%REP.length]+toYou(cur))}</div>`).join('')}</div>
+<div class="field"><label for="vd">"나"를 주어로 방어하세요</label><textarea id="vd" placeholder="나는 ..."></textarea></div>
+<div class="chips"><button class="chip" data-hint="s">자기방어 팁</button><button class="chip" data-hint="a">수용 역설 팁</button></div>
+<p class="sub" id="vh"></p>
+<div class="lbl">이번 대결은?</div>
+<div class="chips"><button class="chip" data-vr="4">완승</button><button class="chip" data-vr="3">크게 이김</button><button class="chip" data-vr="2">간신히 이김</button><button class="chip" data-vr="1">짐</button></div>`);
+$('vd').focus({preventScroll:true});}
+function finish(){body(`<div class="verdict">${th.length}개의 생각과 싸웠습니다. ${res.map(r=>`<br>· ${esc(r.t)} → <b>${r.n}번째에 완승</b>`).join('')}</div>
+<p class="sub">책에서는 긍정적인 목소리가 '완승'할 때까지 반복하라고 합니다. 간신히 이긴 생각은 다른 날 다시 붙어 보세요.</p>
+<div class="finish"><button class="btn primary" id="vsave">기록 저장</button><button class="btn" id="vagain">다시 하기</button></div>`);
+$('vsave').onclick=()=>{addNote(19,t.t,res.map(r=>[r.t,r.last+` (${r.n}라운드)`]));G.close();};$('vagain').onclick=start;}
+$('sheetIn').onclick=e=>{const h=e.target.closest('[data-hint]');if(h){$('vh').textContent=h.dataset.hint==='s'?'자기방어: 생각이 왜곡됐고 사실이 아니라고 반박합니다. 예) "아니, 나는 쓸모없지 않아. 오늘도 학생을 가르쳤고 약속을 지켰어."':'수용 역설: 비판 속 진실을 평온하게 인정합니다. 예) "맞아, 나는 부족한 점이 많아. 그래서 배울 게 많지. 그게 나를 쓸모없게 만들진 않아."';return;}
+const r=e.target.closest('[data-vr]');if(!r)return;const d=val('vd').trim();if(!d){G.toast('먼저 방어하는 말을 적어 주세요');return;}
+att.push({d,r:+r.dataset.vr});
+if(+r.dataset.vr===4){res.push({t:th[idx],n:att.length,last:d});att=[];idx++;G.toast('완승!');if(idx>=th.length)finish();else round();}
+else{G.toast('완승이 목표예요. 한 번 더!');round();}};
+start();}
+
+/* ---------- arrow (25, 26, 27) ---------- */
+function arrow(mode,t){
+const Q={me:'이 생각이 사실이라면, 왜 속상할까? 그건 나에게 어떤 의미일까?',rel:'이게 사실이라면 그 사람은 어떤 사람이고, 나는 어떤 사람이며, 우리는 어떤 관계일까?',if:'만약 그렇다면, 일어날 수 있는 최악의 일은? 가장 두려운 건?'}[mode];
+const last=M.entries[0];let chain=[last?last.thought:''],picked=[],bottom=false,prob=20,acc='';
+sheet(`${t.n}번 · ${CATS[t.c]}`,esc(t.t),esc(t.d),'');
+function read(){chain=chain.map((_,i)=>val('ac'+i));if($('apr'))prob=+val('apr');if($('aacc'))acc=val('aacc');}
+function draw(){body(`<div class="block" style="gap:10px">${chain.map((c,i)=>`${i?`<div class="down">↓</div><div class="q">${esc(Q)}</div>`:'<div class="lbl">시작할 부정적인 생각</div>'}<textarea id="ac${i}" style="min-height:60px">${esc(c)}</textarea>`).join('')}</div>
+${bottom?`<div class="lbl">내려간 생각들 밑에 깔린 신념은? (여러 개 가능)</div><div class="chips">${BELIEFS.map(b=>`<button class="chip${picked.includes(b)?' on':''}" data-bel="${esc(b)}">${esc(b)}</button>`).join('')}</div>
+${mode==='if'?rng('apr',prob,'가장 두려운 그 일이 실제로 일어날 가능성은 몇 %?')+`<div class="field"><label for="aacc">그렇게 된다 해도, 나는 받아들이고 살아갈 수 있을까?</label><textarea id="aacc">${esc(acc)}</textarea></div>`:''}
+<div class="finish"><button class="btn primary" id="asave">기록 저장</button></div>`
+:`<div class="controls"><button class="btn primary" id="amore">↓ 한 단계 더</button><button class="btn" id="abot">여기가 바닥</button></div><p class="sub">대개 3~6단계 내려가면 반복되는 핵심 신념이 보입니다.</p>`}`);
+if($('amore'))$('amore').onclick=()=>{read();if(!chain[chain.length-1].trim()){G.toast('먼저 칸을 채워 주세요');return;}chain.push('');draw();$('ac'+(chain.length-1)).focus();};
+if($('abot'))$('abot').onclick=()=>{read();if(!chain[0].trim()){G.toast('시작할 생각을 적어 주세요');return;}bottom=true;draw();};
+if($('asave'))$('asave').onclick=()=>{read();const p=chain.filter(s=>s.trim()).map((s,i)=>[i?`↓ ${i}`:'시작',s]);if(picked.length)p.push(['핵심 신념',picked.join(', ')]);if(mode==='if')p.push(['가능성',prob+'%'],['받아들일 수 있나',acc||'-']);addNote(t.n,t.t,p);G.close();};}
+$('sheetIn').onclick=e=>{const b=e.target.closest('[data-bel]');if(!b)return;read();const v=b.dataset.bel;picked=picked.includes(v)?picked.filter(x=>x!==v):picked.concat(v);const y=$('sheet').scrollTop;draw();$('sheet').scrollTop=y;};
+draw();}
+
+/* ---------- list editor helper ---------- */
+function listHTML(key,items,ph,sug){return `<div class="list">${items.map((x,i)=>`<div class="item row2"><span>${esc(x)}</span><button class="iconbtn sm" data-rm="${key}:${i}" aria-label="지우기">${CLOSE}</button></div>`).join('')}
+<div class="addrow"><input type="text" id="in_${key}" placeholder="${ph}"><button class="btn sm" data-add="${key}">추가</button></div>
+${sug?`<div class="chips">${sug.map(s=>`<button class="chip" data-sug="${key}:${esc(s)}">+ ${esc(s)}</button>`).join('')}</div>`:''}</div>`;}
+
+/* ---------- cba (29, 47) ---------- */
+function cba(mode,t){
+const S={mode:mode==='blame'?'blame':'plain',target:mode==='blame'?'상대를 탓하는 것':'',pros:[],cons:[],w:50,why:''};
+sheet(`${t.n}번 · ${CATS[t.c]}`,esc(t.t),esc(t.d),'');
+function read(){if($('ctg'))S.target=val('ctg');if($('cw'))S.w=+val('cw');if($('cwhy'))S.why=val('cwhy');}
+function draw(){const para=S.mode==='para';
+body(`${S.mode!=='blame'?`<div class="chips"><button class="chip${!para?' on':''}" data-cm="plain">직접 분석</button><button class="chip${para?' on':''}" data-cm="para">역설적 분석</button></div>`:''}
+<div class="field"><label for="ctg">분석할 생각·감정·습관</label><input type="text" id="ctg" value="${esc(S.target)}" placeholder="예: 나는 완벽해야 해 / 밤늦게 폰 보기"></div>
+<div class="lbl">${para?'장점만 적습니다. 이 생각이나 습관이 나에게 주는 것은?':'이점 (이 믿음·습관이 나에게 주는 것)'}</div>
+${listHTML('pros',S.pros,'이점 추가',S.mode==='blame'?['내가 옳다는 느낌','우월감','내 잘못은 안 봐도 됨','상대를 벌하는 기분','피해자로서 동정받음']:null)}
+${para?`<div class="field"><label for="cwhy">이 모든 장점을 생각할 때, 나는 왜 바뀌어야 할까?</label><textarea id="cwhy">${esc(S.why)}</textarea></div><p class="sub">이 질문에 답하다 보면 변화를 가로막는 힘이 얼마나 강한지 보이고, 그래도 바뀌고 싶은 진짜 이유가 드러납니다.</p>`
+:`<div class="lbl">손해 (치르는 대가)</div>${listHTML('cons',S.cons,'손해 추가',S.mode==='blame'?['관계가 멀어짐','같은 싸움이 반복됨','문제가 풀리지 않음','나도 지치고 화가 남']:null)}
+<div class="field"><label for="cw">100점을 나눈다면 이점 : 손해는?</label><div class="rng"><input type="range" id="cw" min="0" max="100" step="5" value="${S.w}"><output class="num" id="cwo2">${S.w} : ${100-S.w}</output></div></div>
+<div class="verdict${S.w>50?' warn':''}" id="cv">${verdict()}</div>`}
+<div class="finish"><button class="btn primary" id="csave">기록 저장</button></div>`);
+$('csave').onclick=()=>{read();if(!S.target.trim()&&!S.pros.length){G.toast('분석할 대상을 적어 주세요');return;}
+const p=[['대상',S.target||'-'],['이점',S.pros.join(', ')||'-']];if(para)p.push(['왜 바뀌어야 할까',S.why||'-']);else p.push(['손해',S.cons.join(', ')||'-'],['이점 : 손해',S.w+' : '+(100-S.w)]);addNote(t.n,t.t,p);G.close();};}
+function verdict(){return S.w<50?`손해가 더 큽니다(${100-S.w}점). 이 생각을 바꿀 이유가 충분합니다. 이제 다른 기법으로 반박해 보세요.`:S.w>50?`지금은 이점이 더 크게 느껴집니다(${S.w}점). 억지로 바꾸려 하기보다 역설적 분석으로 이 생각이 지켜주는 것을 먼저 인정해 보세요.`:'팽팽합니다. 목록을 조금 더 채워 보세요.';}
+$('sheetIn').oninput=e=>{if(e.target.id==='cw'){S.w=+e.target.value;$('cwo2').textContent=S.w+' : '+(100-S.w);$('cv').textContent=verdict();$('cv').className='verdict'+(S.w>50?' warn':'');}};
+$('sheetIn').onclick=e=>{const m=e.target.closest('[data-cm]');if(m){read();S.mode=m.dataset.cm;draw();return;}listClick(e,S,read,draw);};
+$('sheetIn').onkeydown=e=>{if(e.key==='Enter'&&e.target.id&&e.target.id.startsWith('in_')){e.preventDefault();const k=e.target.id.slice(3);addItem(S,k,read,draw);}};
+draw();}
+function addItem(S,k,read,draw){const v=val('in_'+k).trim();if(!v)return;read();S[k].push(v);const y=$('sheet').scrollTop;draw();$('sheet').scrollTop=y;const i=$('in_'+k);if(i)i.focus({preventScroll:true});}
+function listClick(e,S,read,draw){const a=e.target.closest('[data-add]');if(a){addItem(S,a.dataset.add,read,draw);return true;}
+const r=e.target.closest('[data-rm]');if(r){const[k,i]=r.dataset.rm.split(':');read();S[k].splice(+i,1);const y=$('sheet').scrollTop;draw();$('sheet').scrollTop=y;return true;}
+const s=e.target.closest('[data-sug]');if(s){const i=s.dataset.sug.indexOf(':');const k=s.dataset.sug.slice(0,i),v=s.dataset.sug.slice(i+1);read();if(!S[k].includes(v))S[k].push(v);const y=$('sheet').scrollTop;draw();$('sheet').scrollTop=y;return true;}return false;}
+
+/* ---------- devil (30) ---------- */
+function devil(t){let x='',round=0,wins=0,log=[];
+const LINES=[v=>`오늘 힘들었잖아. ${v} 좀 하면 어때?`,v=>`딱 한 번만. 그게 문제 될 리 없어!`,v=>`내일부터 제대로 하면 되지. 오늘은 ${v}.`,v=>`다들 그렇게 살아. 너만 참으면 손해야.`,v=>`어차피 오늘은 이미 망쳤잖아. 조금 더 한다고 달라져?`,v=>`넌 이번엔 못 참을 것 같은데? 진심으로 바꾸고 싶은 거 맞아?`,v=>`인생은 한 번이야. ${v}, 얼마나 좋겠어!`];
+sheet(`${t.n}번 · ${CATS[t.c]}`,esc(t.t),esc(t.d),'');
+function start(){body(`<div class="field"><label for="dx">나를 유혹하는 것은?</label><input type="text" id="dx" placeholder="예: 야식 먹기, 새벽까지 유튜브 보기" value="${esc(x)}"></div>
+<p class="sub">앱이 악마 역할을 맡아 최대한 그럴듯하게 유혹합니다. 당신은 즉시 받아치세요. 5라운드입니다.</p><div class="finish"><button class="btn ochre" id="dgo">악마 부르기</button></div>`);
+$('dgo').onclick=()=>{x=val('dx').trim();if(!x){G.toast('유혹을 적어 주세요');return;}round=0;wins=0;log=[];draw();};}
+function draw(){const line=LINES[round%LINES.length](x);
+body(`<div class="dots">${[0,1,2,3,4].map(i=>`<i class="${i<=round?'on':''}"></i>`).join('')}</div>
+<div class="chat">${log.map(l=>`<div class="bubble"><small>악마</small>${esc(l.l)}</div><div class="bubble me"><small>나 · ${l.w?'버팀':'흔들림'}</small>${esc(l.a)}</div>`).join('')}
+<div class="bubble"><small>악마 · ${round+1}라운드</small>${esc(line)}</div></div>
+<div class="field"><label for="da">즉시 받아치세요</label><textarea id="da" placeholder="필요 없어. 나는 ..."></textarea></div>
+<div class="controls"><button class="btn primary" data-dw="1">버텼다</button><button class="btn" data-dw="0">흔들렸다</button></div>`);}
+function end(){body(`<div class="verdict${wins>=4?'':' warn'}"><b>${wins} / 5</b> 라운드를 버텼습니다. ${wins>=4?'악마의 말이 이제 덜 매혹적으로 들리나요?':'흔들린 라운드의 말이 진짜 약점입니다. 그 문장에 대한 반박을 미리 준비해 두세요.'}</div>
+<div class="finish"><button class="btn primary" id="dsave">기록 저장</button><button class="btn" id="dre">다시 하기</button></div>`);
+$('dsave').onclick=()=>{addNote(30,t.t,[['유혹',x],['버틴 라운드',wins+'/5']].concat(log.map(l=>[l.l,l.a+(l.w?'':' (흔들림)')])));G.close();};$('dre').onclick=start;}
+$('sheetIn').onclick=e=>{const b=e.target.closest('[data-dw]');if(!b)return;const a=val('da').trim();if(!a){G.toast('먼저 받아치는 말을 적어 주세요');return;}
+const w=b.dataset.dw==='1';log.push({l:LINES[round%LINES.length](x),a,w});if(w)wins++;round++;if(round>=5)end();else draw();};
+start();}
+
+/* ---------- decide (32) ---------- */
+function decide(t){const S={A:{name:'',items:[]},B:{name:'',items:[]}};
+sheet(`${t.n}번 · ${CATS[t.c]}`,esc(t.t),esc(t.d),'');
+const tot=o=>o.items.reduce((s,x)=>s+(x.p?x.w:-x.w),0);
+function read(){['A','B'].forEach(k=>{if($('dn'+k))S[k].name=val('dn'+k);});}
+function side(k){const o=S[k];return `<div class="card"><div class="sec-h"><h3>${k}</h3><span class="num">총점 <b style="color:${tot(o)>=0?'var(--moss)':'var(--ochre)'}">${tot(o)>0?'+':''}${tot(o)}</b></span></div>
+<input type="text" id="dn${k}" value="${esc(o.name)}" placeholder="선택지 ${k} 이름">
+<div class="list">${o.items.map((x,i)=>`<div class="item"><div class="row2"><span><b style="color:${x.p?'var(--moss)':'var(--ochre)'}">${x.p?'장점':'단점'}</b> ${esc(x.t)}</span><button class="iconbtn sm" data-drm="${k}:${i}" aria-label="지우기">${CLOSE}</button></div>
+<div class="pts">${[1,2,3,4,5].map(w=>`<button class="${x.w===w?'on':''}" data-dwt="${k}:${i}:${w}">${x.p?'+':'−'}${w}</button>`).join('')}</div></div>`).join('')}</div>
+<div class="addrow3"><input type="text" id="di${k}" placeholder="장점이나 단점"><button class="btn sm" data-dadd="${k}:1">장점</button><button class="btn sm" data-dadd="${k}:0">단점</button></div></div>`;}
+function verdict(){const a=tot(S.A),b=tot(S.B),n=k=>esc(S[k].name||k);if(!S.A.items.length||!S.B.items.length)return'';
+let m;if(Math.abs(a)<=2&&Math.abs(b)<=2)m='두 총점이 모두 0에 가깝습니다. 지금 당장은 선택하지 않는 편이 낫습니다.';
+else if(a>0&&b>0)m=`둘 다 긍정적입니다. 어떤 결정을 해도 손해 보지 않습니다. 점수로는 ${a>=b?n('A'):n('B')} 쪽이 조금 앞섭니다.`;
+else if(a<0&&b<0)m='둘 다 부정적입니다. 어느 쪽도 이득이 크지 않으니, 제3의 선택지가 없는지 찾아보세요.';
+else m=`${a>b?n('A'):n('B')}는 긍정적이고 ${a>b?n('B'):n('A')}는 부정적입니다. 결정이 쉬운 경우입니다.`;
+return `<div class="verdict">${m}<br><span class="hint">결과에 집착할 필요는 없습니다. 마음이 편해질 때까지 목록을 여러 번 고쳐 써도 됩니다.</span></div>`;}
+function draw(){const y=$('sheet').scrollTop;body(`${side('A')}${side('B')}${verdict()}<div class="finish"><button class="btn primary" id="dsv">기록 저장</button></div>`);$('sheet').scrollTop=y;
+$('dsv').onclick=()=>{read();if(!S.A.items.length&&!S.B.items.length){G.toast('장단점을 적어 주세요');return;}addNote(32,t.t,['A','B'].map(k=>[`${S[k].name||k} (총점 ${tot(S[k])})`,S[k].items.map(x=>(x.p?'+':'−')+x.w+' '+x.t).join(', ')||'-']));G.close();};}
+$('sheetIn').onclick=e=>{let b=e.target.closest('[data-dadd]');if(b){const[k,p]=b.dataset.dadd.split(':');const v=val('di'+k).trim();if(!v){G.toast('내용을 적어 주세요');return;}read();S[k].items.push({t:v,p:p==='1',w:3});draw();$('di'+k).focus({preventScroll:true});return;}
+b=e.target.closest('[data-dwt]');if(b){const[k,i,w]=b.dataset.dwt.split(':');read();S[k].items[+i].w=+w;draw();return;}
+b=e.target.closest('[data-drm]');if(b){const[k,i]=b.dataset.drm.split(':');read();S[k].items.splice(+i,1);draw();}};
+draw();}
+
+/* ---------- predict vs actual (18, 34, 35, 36, 42~46) ---------- */
+const PM={joy:{title:'즐거움 예측 표',pl:'예상 만족도',al:'실제 만족도',ph:'예: 한강 산책, 친구랑 저녁',better:(p,a)=>a>=p},
+task:{title:'미루지 않기 표',pl:'예상 난이도',al:'실제 난이도',ph:'예: 강의 자료 첫 장만 만들기',better:(p,a)=>a<=p,pl2:'예상 만족도',al2:'실제 만족도'},
+dare:{title:'용기 도전',pl:'예상 불안',al:'실제 불안',ph:'예: 편의점 직원에게 웃으며 인사하기',better:(p,a)=>a<=p}};
+const DARE={18:['버스에서 정류장 이름을 소리 내 말하기','카페에서 엉뚱한 메뉴 물어보기','길에서 노래 흥얼거리며 걷기'],36:['피하던 장소에 5분 머물기','두려운 일의 가장 쉬운 단계 해보기'],42:['모르는 사람 3명에게 웃으며 인사','경비원·점원에게 먼저 인사하기'],43:['대화에서 내 얘기 대신 질문 3개 하기','상대 말을 요약해서 돌려주기'],44:['"사실 좀 긴장돼요"라고 말해보기','"이런 거 잘 몰라요"라고 인정하기'],45:['점원에게 가벼운 칭찬 건네기','지인에게 장난스러운 농담 하나'],46:['커피값 깎아 달라고 부탁하기','무리한 부탁 하나 해서 거절당해보기']};
+function pred(mode,t){const C=PM[mode];let who='혼자',open=null;
+sheet(`${t.n}번 · ${CATS[t.c]}`,esc(mode==='dare'?t.t:C.title),esc(t.d),'');
+function items(){return M.preds.filter(x=>x.mode===mode);}
+function summary(){const d=items().filter(x=>x.a!=null);if(!d.length)return '<p class="sub">해본 뒤 결과를 입력하면 예측과 현실의 차이가 여기 쌓입니다.</p>';
+const avg=f=>Math.round(d.reduce((s,x)=>s+f(x),0)/d.length);const good=d.filter(x=>C.better(x.p,x.a)).length;
+let s=`<div class="stats"><div class="stat"><b class="num">${d.length}</b><span>해본 일</span></div><div class="stat"><b class="num">${avg(x=>x.p)}→${avg(x=>x.a)}</b><span>${C.pl.replace('예상 ','')} 평균</span></div><div class="stat"><b class="num">${Math.round(good/d.length*100)}%</b><span>예상보다 나음</span></div></div>`;
+if(mode==='joy'){const g=w=>{const a=d.filter(x=>x.who===w);return a.length?Math.round(a.reduce((s,x)=>s+x.a,0)/a.length):null;};const al=g('혼자'),tg=g('함께');if(al!=null&&tg!=null)s+=`<p class="sub">실제 만족도: 혼자 ${al} · 함께 ${tg}. "혼자면 비참할 수밖에 없다"는 생각이 맞는지 확인해 보세요.</p>`;}
+return s;}
+function draw(){const y=$('sheet').scrollTop;const it=items();const sug=mode==='dare'?(DARE[t.n]||DARE[36]):null;
+body(`<div class="card"><div class="field"><label for="pn">${mode==='dare'?'오늘의 도전':mode==='task'?'미루던 일 (아주 작게 쪼갠 첫 단계)':'해볼 활동'}</label><input type="text" id="pn" placeholder="${C.ph}"></div>
+${sug?`<div class="chips">${sug.map(s=>`<button class="chip" data-ps="${esc(s)}">${esc(s)}</button>`).join('')}</div>`:''}
+${mode==='joy'?`<div class="chips">${['혼자','함께'].map(w=>`<button class="chip${who===w?' on':''}" data-pw="${w}">${w}</button>`).join('')}</div>`:''}
+${rng('pp',50,C.pl+' (0~100)')}${C.pl2?rng('pp2',50,C.pl2+' (0~100)'):''}
+<button class="btn primary sm" id="padd">예측 기록</button></div>
+<div class="list">${it.map(x=>{const done=x.a!=null;return `<div class="item"><div class="top2"><b>${esc(x.name)}</b><small>${md(x.ts)}${x.who?' · '+x.who:''}</small></div>
+${done?`<div class="cmp"><div class="row"><span>${C.pl.replace('예상 ','')}</span><div class="bars"><i class="b0" style="width:${Math.max(2,x.p)}%"></i><i class="b1" style="width:${Math.max(2,x.a)}%"></i></div></div>
+${C.pl2?`<div class="row"><span>${C.pl2.replace('예상 ','')}</span><div class="bars"><i class="b0" style="width:${Math.max(2,x.p2)}%"></i><i class="b1" style="width:${Math.max(2,x.a2)}%"></i></div></div>`:''}</div>
+<small>예상 ${x.p} → 실제 ${x.a} · ${C.better(x.p,x.a)?'예상보다 나았어요':'예상이 맞았어요'}</small>`
+:open===x.id?`${rng('pa',x.p,C.al)}${C.pl2?rng('pa2',x.p2,C.al2):''}<div class="controls" style="justify-content:flex-start"><button class="btn primary sm" data-psave="${x.id}">결과 저장</button></div>`
+:`<small>${C.pl} ${x.p}${C.pl2?' · '+C.pl2+' '+x.p2:''}</small><div class="controls" style="justify-content:flex-start"><button class="btn sm" data-popen="${x.id}">해봤어요 · 결과 입력</button><button class="btn sm" data-pdel="${x.id}">삭제</button></div>`}</div>`;}).join('')}</div>
+<div class="pill"><i style="background:var(--ochre)"></i>예상 <i style="background:var(--moss)"></i>실제</div>${summary()}`);$('sheet').scrollTop=y;}
+$('sheetIn').onclick=e=>{let b=e.target.closest('[data-ps]');if(b){$('pn').value=b.dataset.ps;return;}
+b=e.target.closest('[data-pw]');if(b){who=b.dataset.pw;draw();return;}
+if(e.target.id==='padd'){const n=val('pn').trim();if(!n){G.toast('무엇을 할지 적어 주세요');return;}M.preds.unshift({id:uid(),ts:Date.now(),mode,n:t.n,name:n,who:mode==='joy'?who:null,p:+val('pp'),p2:C.pl2?+val('pp2'):null,a:null});save();draw();G.toast('예측을 기록했습니다. 해본 뒤 결과를 입력하세요');return;}
+b=e.target.closest('[data-popen]');if(b){open=b.dataset.popen;draw();return;}
+b=e.target.closest('[data-pdel]');if(b){if(b.dataset.arm){M.preds=M.preds.filter(x=>x.id!==b.dataset.pdel);save();draw();}else{b.dataset.arm=1;b.textContent='한 번 더 누르면 삭제';}return;}
+b=e.target.closest('[data-psave]');if(b){const x=M.preds.find(z=>z.id===b.dataset.psave);x.a=+val('pa');if(C.pl2)x.a2=+val('pa2');x.done=Date.now();open=null;save();draw();renderMind();G.toast(C.better(x.p,x.a)?'현실이 예상보다 나았네요':'기록했습니다');}};
+draw();}
+
+/* ---------- wizard: 생각 하나 풀어보기 ---------- */
+function wizard(){
+const S={step:0,sit:'',emo:{},thought:'',b0:80,r1:'',r2:'',tgt:{},dist:[],tech:null,ans:[],pos:'',posB:80,b1:null,now:{}};
+const STEPS=['상황','감정','생각','긍정적 재구성','왜곡 찾기','기법 적용','새로운 생각','결과'];
+sheet('생각 하나 풀어보기','','','');
+function read(){const s=S.step;
+if(s===0)S.sit=val('ws');
+if(s===1)Object.keys(S.emo).forEach((k,i)=>{S.emo[k]=+val('we'+i);});
+if(s===2){S.thought=val('wt');S.b0=+val('wb0');}
+if(s===3){S.r1=val('wr1');S.r2=val('wr2');Object.keys(S.emo).forEach((k,i)=>{S.tgt[k]=+val('wg'+i);});}
+if(s===5&&S.tech)S.ans=techQ().map((_,i)=>val('wa'+i));
+if(s===6){S.pos=val('wp');S.posB=+val('wpb');S.b1=+val('wb1');Object.keys(S.emo).forEach((k,i)=>{S.now[k]=+val('wn'+i);});}}
+function recs(){const c={};S.dist.forEach(d=>(MAP[d]||[]).forEach((n,i)=>{c[n]=(c[n]||0)+(10-i);}));
+const r=Object.keys(c).map(Number).sort((a,b)=>c[b]-c[a]).slice(0,6);return r.length?r:[3,4,5,19,21,10];}
+function techQ(){const t=byN(S.tech);if(S.tech===19)return[`부정적인 목소리: "${toYou(S.thought)}" — "나는~"으로 방어해 보세요.`,'완승했나요? 아니라면 수용 역설로 한 번 더: "맞아, ~. 그래도 ~."'];return t.q;}
+const q=(t,h)=>`<div class="q">${t}</div>${h?`<p class="sub" style="margin:0">${h}</p>`:''}`;
+function draw(){const s=S.step;const ek=Object.keys(S.emo);
+$('sheetIn').querySelector('h2').textContent=STEPS[s];$('sheetIn').querySelector('.eyebrow').textContent=`생각 하나 풀어보기 · ${s+1}/${STEPS.length}`;
+let h=`<div class="dots">${STEPS.map((_,i)=>`<i class="${i<=s?'on':''}"></i>`).join('')}</div>`;
+if(s===0)h+=`${q('지금 무엇 때문에 마음이 불편한가요?','한두 문장이면 충분합니다. 사실만 적어 보세요.')}<textarea id="ws" style="min-height:110px" placeholder="예: 수업 준비를 못 해서 학생 앞에서 버벅였다">${esc(S.sit)}</textarea>`;
+if(s===1)h+=`${q('어떤 감정이 드나요?','해당하는 것을 모두 고르고, 강도를 매겨 보세요.')}<div class="chips">${EMO.map(e=>`<button class="chip${e in S.emo?' on':''}" data-emo="${e}">${e}</button>`).join('')}</div>${ek.map((k,i)=>rng('we'+i,S.emo[k],k+' (%)')).join('')}`;
+if(s===2)h+=`${q('그 순간 머릿속에 스친 생각은?','머릿속 말 그대로, "나는 ~" 형태로 적어 보세요.')}<textarea id="wt" style="min-height:90px" placeholder="예: 나는 선생 자격이 없어">${esc(S.thought)}</textarea>${rng('wb0',S.b0,'이 생각을 지금 얼마나 믿나요? (%)')}`;
+if(s===3)h+=`${q('1번 긍정적 재구성','이 감정을 없애기 전에, 이 감정이 지켜주는 것부터 봅니다.')}
+<div class="field"><label for="wr1">이 생각이나 감정이 나에게 주는 이점은?</label><textarea id="wr1" placeholder="예: 다음 수업은 더 철저히 준비하게 만든다">${esc(S.r1)}</textarea></div>
+<div class="field"><label for="wr2">이 감정은 나의 어떤 좋은 가치를 보여주나요?</label><textarea id="wr2">${esc(S.r2)}</textarea></div>
+<div class="chips">${VALUES.map(v=>`<button class="chip" data-val="${v}">+ ${v}</button>`).join('')}</div>
+${ek.length?`${q('2번 마법 다이얼','좋은 점은 남기고, 어디까지 낮추면 충분할까요?')}${ek.map((k,i)=>rng('wg'+i,S.tgt[k]!=null?S.tgt[k]:Math.round(S.emo[k]/2/5)*5,`${k}: 지금 ${S.emo[k]} → 목표`)).join('')}`:''}`;
+if(s===4)h+=`<div class="bubble"><small>나의 생각</small>${esc(S.thought)}</div>${q('이 생각에 어떤 왜곡이 들어 있나요?','해당하는 것을 모두 누르세요. 보통 여러 개가 겹칩니다.')}
+<div class="dlist">${DIST.map(d=>`<button class="dist${S.dist.includes(d[0])?' on':''}" data-dist="${d[0]}"><b>${d[1]}</b><span>${d[2]}</span></button>`).join('')}</div>`;
+if(s===5){const r=recs();h+=`${q('어떤 기법으로 반박해 볼까요?',S.dist.length?'고른 왜곡에 잘 듣는 순서로 추천합니다.':'왜곡을 고르지 않아 기본 추천을 보여줍니다.')}
+<div class="chips">${r.map(n=>`<button class="chip${S.tech===n?' on':''}" data-wt="${n}">${byN(n).t}</button>`).join('')}</div>`;
+if(S.tech){const t=byN(S.tech);h+=`<div class="card"><div class="eyebrow">${t.n}번 · ${CATS[t.c]}</div><p style="margin:0;font-size:14px;color:var(--muted)">${esc(t.d)}</p>
+${techQ().map((x,i)=>`<div class="field"><label for="wa${i}">${esc(x)}</label><textarea id="wa${i}">${esc(S.ans[i]||'')}</textarea></div>`).join('')}</div>`;}}
+if(s===6)h+=`<div class="bubble"><small>처음 생각 · 믿음 ${S.b0}%</small>${esc(S.thought)}</div>
+${q('더 현실적인 새 생각','100% 사실이면서, 처음 생각을 약하게 만드는 문장이어야 효과가 있습니다.')}
+<textarea id="wp" style="min-height:90px" placeholder="예: 오늘 준비가 부족했던 건 맞아. 그래도 8년 동안 학생들을 가르쳐 왔고, 다음 수업은 준비할 수 있어.">${esc(S.pos)}</textarea>
+${rng('wpb',S.posB,'이 새 생각을 얼마나 믿나요? (%)')}${rng('wb1',S.b1!=null?S.b1:S.b0,'처음 생각은 이제 몇 % 믿나요?')}
+${ek.length?`<div class="lbl">감정은 지금 몇 %인가요?</div>${ek.map((k,i)=>rng('wn'+i,S.now[k]!=null?S.now[k]:S.emo[k],`${k} (처음 ${S.emo[k]} · 목표 ${S.tgt[k]!=null?S.tgt[k]:'-'})`)).join('')}`:''}`;
+if(s===7){const drop=S.b0-S.b1;const ok=S.posB>=80&&drop>=30;
+h+=`<div class="verdict${ok?'':' warn'}">${ok?`처음 생각에 대한 믿음이 <b>${S.b0}% → ${S.b1}%</b>로 줄었습니다. 생각이 풀렸어요.`:S.posB<80?`새 생각을 ${S.posB}%만 믿고 있어요. 새 생각이 100% 사실처럼 느껴질 때까지 다른 기법을 하나 더 써 보세요.`:`처음 생각이 아직 ${S.b1}% 남아 있어요. 다른 기법으로 한 번 더 반박해 보면 더 내려갑니다.`}</div>
+<div class="cmp"><div class="row"><span>처음 생각</span><div class="bars"><i class="b0" style="width:${Math.max(2,S.b0)}%"></i><i class="b1" style="width:${Math.max(2,S.b1)}%"></i></div></div>
+${ek.map(k=>`<div class="row"><span>${k}</span><div class="bars"><i class="b0" style="width:${Math.max(2,S.emo[k])}%"></i><i class="b1" style="width:${Math.max(2,S.now[k])}%"></i></div></div>`).join('')}</div>
+<div class="pill"><i style="background:var(--ochre)"></i>처음 <i style="background:var(--moss)"></i>지금</div>
+<div class="bubble me"><small>새 생각 · 믿음 ${S.posB}%</small>${esc(S.pos)}</div>`;}
+h+=`<div class="finish">${s===7?`<button class="btn primary" id="wsave">저장하고 닫기</button><button class="btn" id="wmore">다른 기법 더 해보기</button>`:`<button class="btn primary" id="wnext">${s===6?'결과 보기':'다음'}</button>${s?'<button class="btn" id="wprev">이전</button>':''}`}</div>`;
+body(h);$('sheet').scrollTop=0;
+if($('wnext'))$('wnext').onclick=next;if($('wprev'))$('wprev').onclick=()=>{read();S.step--;draw();};
+if($('wmore'))$('wmore').onclick=()=>{S.step=5;S.tech=null;S.ans=[];draw();};
+if($('wsave'))$('wsave').onclick=()=>{const t=S.tech?byN(S.tech):null;
+M.entries.unshift({id:uid(),ts:Date.now(),sit:S.sit,thought:S.thought,b0:S.b0,b1:S.b1,pos:S.pos,posB:S.posB,dist:S.dist,
+emo:Object.fromEntries(Object.keys(S.emo).map(k=>[k,[S.emo[k],S.tgt[k]!=null?S.tgt[k]:null,S.now[k]]])),reframe:[S.r1,S.r2],tech:S.tech,techAns:t?techQ().map((x,i)=>[x,S.ans[i]||'']).filter(x=>x[1]):[]});
+save();renderMind();G.close();G.toast('생각 일지에 저장했습니다');};}
+function next(){read();const s=S.step;
+if(s===1&&!Object.keys(S.emo).length){G.toast('감정을 하나 이상 골라 주세요');return;}
+if(s===2&&!S.thought.trim()){G.toast('생각을 적어 주세요');return;}
+if(s===6&&!S.pos.trim()){G.toast('새 생각을 적어 주세요');return;}
+S.step++;draw();}
+$('sheetIn').onclick=e=>{let b=e.target.closest('[data-emo]');if(b){read();const k=b.dataset.emo;if(k in S.emo)delete S.emo[k];else S.emo[k]=60;const y=$('sheet').scrollTop;draw();$('sheet').scrollTop=y;return;}
+b=e.target.closest('[data-dist]');if(b){const k=b.dataset.dist;S.dist=S.dist.includes(k)?S.dist.filter(x=>x!==k):S.dist.concat(k);b.classList.toggle('on');return;}
+b=e.target.closest('[data-wt]');if(b){read();const n=+b.dataset.wt;if(S.tech!==n){S.tech=n;S.ans=[];}const y=$('sheet').scrollTop;draw();$('sheet').scrollTop=y;return;}
+b=e.target.closest('[data-val]');if(b){const ta=$('wr2');ta.value=(ta.value.trim()?ta.value.trim()+', ':'')+b.dataset.val;}};
+draw();}
+
+/* ---------- view ---------- */
+let cat='all',cheat=null;
+function journal(){const all=M.entries.map(e=>({ts:e.ts,e})).concat(M.notes.map(n=>({ts:n.ts,n}))).sort((a,b)=>b.ts-a.ts).slice(0,12);
+if(!all.length)return '<p class="sub">아직 기록이 없습니다. 위에서 생각 하나를 풀어 보세요.</p>';
+return `<div class="list">${all.map(x=>{if(x.e){const e=x.e;return `<details class="item"><summary><div class="top2"><b>${esc(e.thought)}</b><small>${md(e.ts)}</small></div>
+<small>믿음 <span class="num">${e.b0}→${e.b1}</span>${e.dist&&e.dist.length?' · '+e.dist.map(d=>DN[d]).join(', '):''}</small></summary>
+<div class="dbody">${e.sit?`<p><b>상황</b> ${esc(e.sit)}</p>`:''}<p><b>감정</b> ${Object.entries(e.emo||{}).map(([k,v])=>`${k} ${v[0]}→${v[2]}`).join(' · ')}</p>
+${e.reframe&&e.reframe.some(Boolean)?`<p><b>긍정적 재구성</b> ${esc(e.reframe.filter(Boolean).join(' / '))}</p>`:''}
+${e.tech?`<p><b>${esc(byN(e.tech).t)}</b> ${e.techAns.map(a=>esc(a[1])).join(' / ')}</p>`:''}<p><b>새 생각 (${e.posB}%)</b> ${esc(e.pos)}</p>
+<button class="btn sm" data-jdel="e:${e.id}">삭제</button></div></details>`;}
+const n=x.n;return `<details class="item"><summary><div class="top2"><b>${esc(n.title)}</b><small>${md(n.ts)}</small></div><small>${esc(String((n.pairs[0]||['',''])[1]).slice(0,60))}</small></summary>
+<div class="dbody">${n.pairs.map(p=>`<p><b>${esc(p[0])}</b> ${esc(p[1])}</p>`).join('')}<button class="btn sm" data-jdel="n:${n.id}">삭제</button></div></details>`;}).join('')}</div>`;}
+function renderMind(){const root=$('mindRoot');if(!root)return;
+const e=M.entries,drop=e.length?Math.round(e.reduce((s,x)=>s+(x.b0-x.b1),0)/e.length):0;
+const lib=T.filter(t=>cat==='all'||t.c===cat);
+root.innerHTML=`<div class="focus"><div class="eyebrow">왜곡된 생각을 바로잡는 50가지 방법</div><h2>마음 도구</h2><p>기분은 생각에서 옵니다. 괴로운 생각 하나를 붙잡아 사실인지 따져 보고, 더 현실적인 생각으로 바꿔 봅니다.</p></div>
+<button class="hero" data-mwiz><span class="eyebrow" style="color:inherit;opacity:.8">5~10분 · 기분 일지</span><b>생각 하나 풀어보기</b><span>상황 → 감정 → 생각 → 재구성 → 왜곡 찾기 → 기법 → 새 생각</span><span class="go">시작</span></button>
+${counterHTML()}
+<div class="sec-h"><h3>바로 쓰는 도구</h3><span>눌러서 시작</span></div>
+<div class="tgrid">${QUICK.map(n=>{const t=byN(n);return `<button class="tool" data-mt="${n}"><span class="n">${n}번 · ${CATS[t.c]}</span><b>${t.t}</b><span>${esc(t.d.split('.')[0])}.</span></button>`;}).join('')}</div>
+<div class="sec-h"><h3>왜곡 커닝 페이퍼</h3><span>왜곡 → 잘 듣는 기법</span></div>
+<div class="chips">${DIST.map(d=>`<button class="chip${cheat===d[0]?' on':''}" data-cheat="${d[0]}">${d[1]}</button>`).join('')}</div>
+${cheat?`<div class="card"><p style="margin:0;font-size:14px;color:var(--muted)"><b style="color:var(--ink)">${DN[cheat]}</b> · ${DIST.find(d=>d[0]===cheat)[2]}</p><div class="chips">${[1,2].concat(MAP[cheat]).map(n=>`<button class="chip" data-mt="${n}">${n}. ${byN(n).t}</button>`).join('')}</div></div>`:''}
+<div class="sec-h"><h3>생각 일지</h3><span>최근 기록</span></div>
+<div class="stats"><div class="stat"><b class="num">${e.length}</b><span>풀어낸 생각</span></div><div class="stat"><b class="num">${e.length?'−'+drop:'-'}</b><span>평균 믿음 감소(%p)</span></div><div class="stat"><b class="num">${M.notes.length+M.preds.filter(x=>x.a!=null).length}</b><span>기법 연습</span></div></div>
+${journal()}
+<div class="sec-h"><h3>50가지 기법</h3><span>${lib.length}개</span></div>
+<div class="chips"><button class="chip${cat==='all'?' on':''}" data-cat="all">전체</button>${Object.entries(CATS).map(([k,v])=>`<button class="chip${cat===k?' on':''}" data-cat="${k}">${v}</button>`).join('')}</div>
+<div class="lib">${lib.map(t=>`<details><summary><span class="no">${t.n}</span><span><span class="nm">${t.t}</span><br><span class="ct">${CATS[t.c]}${t.k?' · 전용 도구':''}</span></span><span class="ct">＋</span></summary>
+<div class="body"><span>${esc(t.d)}</span><ul>${t.q.map(x=>`<li>${esc(x)}</li>`).join('')}</ul><button class="btn sm primary" data-mt="${t.n}">해보기</button></div></details>`).join('')}</div>
+<p class="sub" style="font-size:12px">데이비드 번스의 인지행동치료 기법을 이 앱에 맞게 요약·재구성했습니다. 우울감이나 불안이 2주 이상 이어지거나 일상이 힘들다면 전문가와 꼭 상담하세요.</p>`;
+renderToday();}
+function renderToday(){const el=$('mindToday');if(!el)return;const pool=T.filter(t=>t.c!=='vis'||t.n!==24);
+const d=new Date();const t=pool[(d.getFullYear()*372+d.getMonth()*31+d.getDate())%pool.length];const c=M.counts[tday()]||0;
+el.innerHTML=`<div class="mindtoday"><div class="eyebrow">오늘의 마음 도구 · ${t.n}번 ${CATS[t.c]}</div><b>${t.t}</b><span class="s">${esc(t.d)}</span>
+<div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center"><button class="btn sm primary" data-mt="${t.n}">해보기</button><button class="btn sm" data-mwiz>생각 하나 풀기</button><button class="btn sm" data-cnt="1">알아차림 +1 <span class="num">(${c})</span></button></div></div>`;}
+
+document.addEventListener('click',ev=>{
+if(!ev.target.isConnected||ev.target.closest('#sheet'))return;
+let b=ev.target.closest('[data-mwiz]');if(b){wizard();return;}
+b=ev.target.closest('[data-mt]');if(b){openTech(+b.dataset.mt);return;}
+b=ev.target.closest('[data-cnt]');if(b){bump(+b.dataset.cnt);return;}
+b=ev.target.closest('[data-cheat]');if(b){cheat=cheat===b.dataset.cheat?null:b.dataset.cheat;renderMind();return;}
+b=ev.target.closest('[data-cat]');if(b){cat=b.dataset.cat;renderMind();return;}
+b=ev.target.closest('[data-jdel]');if(b){if(!b.dataset.arm){b.dataset.arm=1;b.textContent='한 번 더 누르면 삭제';return;}
+const[k,id]=b.dataset.jdel.split(':');if(k==='e')M.entries=M.entries.filter(x=>x.id!==id);else M.notes=M.notes.filter(x=>x.id!==id);save();renderMind();}
+});
+$('sheetIn').addEventListener('click',ev=>{const b=ev.target.closest('[data-cnt]');if(b)bump(+b.dataset.cnt);});
+$('sheetIn').addEventListener('input',e=>{if(e.target.type==='range'){const o=$(e.target.id+'o');if(o)o.textContent=e.target.value;}});
+renderMind();
 })();
 </script>
 </body>
