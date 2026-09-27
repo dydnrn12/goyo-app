@@ -1,0 +1,500 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#E9ECE4" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#111612" media="(prefers-color-scheme: dark)">
+<meta name="description" content="요일별 명상과 맨몸 운동 루틴">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<title>고요와 근력</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=IBM+Plex+Sans+KR:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+:root{padding-top:env(safe-area-inset-top,0px)}
+body{margin:0}
+img{max-width:100%}
+[hidden]{display:none!important}
+:root{
+--bg:#E9ECE4; --surface:#F6F7F2; --surface-2:#DFE4D8; --ink:#1B241E; --muted:#5E6A5C; --line:#C9D1C2;
+--moss:#3D6A4C; --moss-soft:#D3E0D2; --ochre:#B47A2E; --ochre-soft:#F0E1C8; --on-accent:#F6F7F2;
+--shadow:0 1px 0 rgba(27,36,30,.04), 0 8px 24px -12px rgba(27,36,30,.18);
+--serif:"Gowun Batang", "Nanum Myeongjo", serif;
+--sans:"IBM Plex Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", system-ui, sans-serif;
+--mono:"IBM Plex Mono", ui-monospace, "SFMono-Regular", monospace;
+}
+@media (prefers-color-scheme: dark){
+:root:not([data-theme="light"]){
+color-scheme:dark;
+--bg:#111612; --surface:#1A211C; --surface-2:#242D26; --ink:#E3E8DF; --muted:#9AA696; --line:#2F3A31;
+--moss:#86B894; --moss-soft:#223428; --ochre:#DDA75E; --ochre-soft:#3A2E1D; --on-accent:#111612;
+--shadow:0 1px 0 rgba(0,0,0,.2), 0 10px 28px -14px rgba(0,0,0,.6);
+}
+}
+:root[data-theme="dark"]{
+color-scheme:dark;
+--bg:#111612; --surface:#1A211C; --surface-2:#242D26; --ink:#E3E8DF; --muted:#9AA696; --line:#2F3A31;
+--moss:#86B894; --moss-soft:#223428; --ochre:#DDA75E; --ochre-soft:#3A2E1D; --on-accent:#111612;
+--shadow:0 1px 0 rgba(0,0,0,.2), 0 10px 28px -14px rgba(0,0,0,.6);
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:15px;line-height:1.55;-webkit-font-smoothing:antialiased;word-break:keep-all;overflow-wrap:anywhere}
+button{font:inherit;color:inherit;cursor:pointer}
+button:focus-visible,[tabindex]:focus-visible{outline:2px solid var(--moss);outline-offset:2px}
+.app{max-width:480px;margin:0 auto;padding-inline:16px;padding-block:20px 104px;display:flex;flex-direction:column;gap:22px}
+.num{font-family:var(--mono);font-variant-numeric:tabular-nums}
+.eyebrow{font-size:12px;letter-spacing:.08em;color:var(--muted);font-weight:500}
+.top{display:flex;justify-content:space-between;align-items:flex-end;gap:12px}
+.top h1{font-family:var(--serif);font-weight:700;font-size:28px;line-height:1.2;margin:4px 0 0;text-wrap:balance}
+.streak{display:flex;flex-direction:column;align-items:flex-end;gap:2px;flex-shrink:0}
+.streak b{font-family:var(--mono);font-size:26px;font-weight:500;line-height:1;color:var(--moss)}
+.streak span{font-size:12px;color:var(--muted)}
+.week{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}
+.wd{background:none;border:0;padding:8px 0 6px;border-radius:12px;display:flex;flex-direction:column;align-items:center;gap:6px}
+.wd .lab{font-size:12px;color:var(--muted)}
+.wd .dt{font-family:var(--mono);font-size:14px}
+.wd.sel{background:var(--surface);box-shadow:var(--shadow)}
+.wd.today .lab{color:var(--moss);font-weight:600}
+.ring{width:22px;height:22px}
+.ring circle{fill:none;stroke-width:3}
+.ring .bgc{stroke:var(--line)}
+.ring .fg{stroke:var(--moss);stroke-linecap:round;transition:stroke-dashoffset .4s}
+.focus{display:flex;flex-direction:column;gap:4px}
+.focus h2{font-family:var(--serif);font-size:22px;margin:0;font-weight:700}
+.focus p{margin:0;color:var(--muted);font-size:14px}
+.sessions{display:flex;flex-direction:column;gap:10px}
+.sess{display:grid;grid-template-columns:44px 1fr auto;align-items:center;gap:14px;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:14px 14px 14px 12px;text-align:left;width:100%}
+.sess .ico{width:44px;height:44px;border-radius:12px;display:grid;place-items:center}
+.sess.med .ico{background:var(--moss-soft);color:var(--moss)}
+.sess.work .ico{background:var(--ochre-soft);color:var(--ochre)}
+.sess .meta{display:flex;flex-direction:column;gap:1px;min-width:0}
+.sess .t{font-weight:600;font-size:15px}
+.sess .s{font-size:13px;color:var(--muted)}
+.sess .time{font-size:12px;color:var(--muted)}
+.chk{width:30px;height:30px;border-radius:50%;border:1.5px solid var(--line);background:transparent;display:grid;place-items:center;padding:0}
+.chk svg{opacity:0;transition:opacity .2s}
+.sess.done{background:var(--surface-2);border-color:transparent}
+.sess.done .t{text-decoration:line-through;text-decoration-color:var(--muted)}
+.sess.done .chk{background:var(--moss);border-color:var(--moss);color:var(--on-accent)}
+.sess.done .chk svg{opacity:1}
+.note{font-size:13px;color:var(--muted);border-top:1px solid var(--line);padding-top:14px;display:flex;gap:10px}
+.note b{color:var(--ink);font-weight:600;white-space:nowrap}
+.plan{display:flex;flex-direction:column;gap:0}
+.pday{display:grid;grid-template-columns:52px 1fr;gap:12px;padding-block:14px;border-bottom:1px solid var(--line)}
+.pday:last-child{border-bottom:0}
+.pday .d{font-family:var(--serif);font-size:20px;font-weight:700}
+.pday.today .d{color:var(--moss)}
+.pday .items{display:flex;flex-direction:column;gap:3px;font-size:14px}
+.pday .items span{color:var(--muted)}
+.tag{display:inline-block;font-size:11px;font-weight:600;letter-spacing:.04em;padding:1px 7px;border-radius:99px;margin-right:6px;vertical-align:1px}
+.tag.m{background:var(--moss-soft);color:var(--moss)}
+.tag.w{background:var(--ochre-soft);color:var(--ochre)}
+.principles{background:var(--surface);border-radius:16px;padding:16px 18px;display:flex;flex-direction:column;gap:8px;font-size:14px}
+.principles h3{margin:0;font-family:var(--serif);font-size:17px}
+.principles ul{margin:0;padding-left:18px;display:flex;flex-direction:column;gap:4px;color:var(--muted)}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.stat{background:var(--surface);border-radius:14px;padding:12px 14px;display:flex;flex-direction:column;gap:2px}
+.stat b{font-family:var(--mono);font-size:22px;font-weight:500}
+.stat span{font-size:12px;color:var(--muted)}
+.heat{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}
+.heat .h{font-size:11px;color:var(--muted);text-align:center}
+.cell{aspect-ratio:1;max-width:100%;border-radius:8px;background:var(--surface-2);display:grid;place-items:center;font-family:var(--mono);font-size:11px;color:var(--muted)}
+.cell.l1{background:color-mix(in srgb,var(--moss) 30%,var(--surface-2))}
+.cell.l2{background:color-mix(in srgb,var(--moss) 60%,var(--surface-2));color:var(--on-accent)}
+.cell.l3{background:var(--moss);color:var(--on-accent)}
+.cell.fut{opacity:.35}
+.cell.tdy{outline:2px solid var(--ochre);outline-offset:1px}
+.legend{display:flex;gap:8px;align-items:center;font-size:12px;color:var(--muted);justify-content:flex-end}
+.legend i{width:12px;height:12px;border-radius:3px;display:inline-block}
+.sync{font-size:12px;color:var(--muted)}
+.tabbar{position:fixed;left:0;right:0;bottom:0;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-top:1px solid var(--line);padding:8px 16px calc(8px + env(safe-area-inset-bottom,0px));z-index:5}
+.tabbar nav{max-width:480px;margin:0 auto;display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.tab{background:none;border:0;border-radius:12px;padding:8px 4px;display:flex;flex-direction:column;align-items:center;gap:2px;font-size:12px;color:var(--muted)}
+.tab[aria-selected="true"]{color:var(--ink);background:var(--surface)}
+.tab[aria-selected="true"] svg{color:var(--moss)}
+.sheet{position:fixed;inset:0;z-index:10;background:var(--bg);overflow-y:auto;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+.sheet-in{max-width:480px;margin:0 auto;padding-inline:16px;padding-block:16px 32px;display:flex;flex-direction:column;gap:20px;min-height:100%}
+.sheet-top{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.iconbtn{width:40px;height:40px;border-radius:50%;border:1px solid var(--line);background:var(--surface);display:grid;place-items:center;padding:0}
+.sheet h2{font-family:var(--serif);font-size:24px;margin:0;font-weight:700;text-wrap:balance}
+.sheet .sub{color:var(--muted);font-size:14px;margin:4px 0 0}
+.breath{display:flex;flex-direction:column;align-items:center;gap:18px;padding-block:8px}
+.orb-wrap{width:min(72vw,280px);aspect-ratio:1;max-width:100%;display:grid;place-items:center;position:relative}
+.orb-guide{position:absolute;inset:0;border-radius:50%;border:1px dashed var(--line)}
+.orb{width:100%;aspect-ratio:1;border-radius:50%;background:radial-gradient(circle at 40% 35%,color-mix(in srgb,var(--moss) 55%,var(--surface)),var(--moss));transform:scale(.45);opacity:.9}
+.orb-label{position:absolute;font-family:var(--serif);font-size:20px;color:var(--on-accent);font-weight:700;text-shadow:0 1px 6px rgba(0,0,0,.15)}
+.phase-count{font-family:var(--mono);font-size:13px;color:var(--muted)}
+.clock{font-family:var(--mono);font-size:44px;font-weight:400;letter-spacing:-.02em;line-height:1}
+.cue{min-height:3.2em;text-align:center;max-width:32ch;color:var(--ink);font-size:15px}
+.bar{height:4px;background:var(--line);border-radius:4px;overflow:hidden;width:100%}
+.bar i{display:block;height:100%;background:var(--moss);width:0}
+.controls{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+.btn{border:0;border-radius:99px;padding:12px 22px;font-weight:600;background:var(--surface);border:1px solid var(--line)}
+.btn.primary{background:var(--moss);color:var(--on-accent);border-color:var(--moss)}
+.btn.ochre{background:var(--ochre);color:var(--on-accent);border-color:var(--ochre)}
+.durs{display:flex;gap:6px;justify-content:center}
+.dur{border:1px solid var(--line);background:transparent;border-radius:99px;padding:4px 12px;font-family:var(--mono);font-size:13px;color:var(--muted)}
+.dur.on{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.rest{display:flex;align-items:center;justify-content:space-between;gap:12px;background:var(--ochre-soft);border-radius:14px;padding:12px 16px}
+.rest .clock{font-size:30px;color:var(--ochre)}
+.rest span{font-size:13px;color:var(--muted)}
+.block{display:flex;flex-direction:column;gap:8px}
+.block h3{margin:0;font-size:13px;letter-spacing:.06em;color:var(--muted);font-weight:500}
+.warm{margin:0;padding-left:18px;color:var(--muted);font-size:14px;display:flex;flex-direction:column;gap:3px}
+.ex{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:14px;display:flex;flex-direction:column;gap:10px}
+.ex-head{display:flex;justify-content:space-between;gap:10px;align-items:baseline}
+.ex-head b{font-weight:600}
+.ex-head .num{color:var(--ochre);font-size:13px;white-space:nowrap}
+.ex p{margin:0;font-size:13px;color:var(--muted)}
+.sets{display:flex;gap:8px;flex-wrap:wrap}
+.set{min-width:44px;height:36px;border-radius:10px;border:1.5px solid var(--line);background:transparent;font-family:var(--mono);font-size:13px;color:var(--muted)}
+.set.on{background:var(--ochre);border-color:var(--ochre);color:var(--on-accent)}
+.finish{margin-top:auto;display:flex;flex-direction:column;gap:8px}
+.finish .btn{width:100%;padding:14px}
+.toast{position:fixed;left:50%;bottom:calc(92px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:99px;font-size:14px;z-index:20;white-space:nowrap}
+@media (prefers-reduced-motion: reduce){
+.orb{transition:none!important}
+.ring .fg{transition:none}
+}
+</style>
+</head>
+<body>
+<div class="app" id="app">
+<header class="top">
+<div>
+<div class="eyebrow" id="dateLine"></div>
+<h1 id="greet">오늘의 루틴</h1>
+</div>
+<div class="streak" title="모든 세션을 마친 날이 이어진 횟수">
+<b class="num" id="streak">0</b><span>연속 완료일</span>
+</div>
+</header>
+<section id="view-today">
+<div style="display:flex;flex-direction:column;gap:22px">
+<div class="week" id="week"></div>
+<div class="focus">
+<div class="eyebrow" id="focusEyebrow"></div>
+<h2 id="focusTitle"></h2>
+<p id="focusDesc"></p>
+</div>
+<div class="sessions" id="sessions"></div>
+<div class="note" id="note"></div>
+</div>
+</section>
+<section id="view-plan" hidden>
+<div style="display:flex;flex-direction:column;gap:18px">
+<div class="focus"><div class="eyebrow">주 7일 · 반복 주기</div><h2>한 주의 흐름</h2><p>매일 아침과 저녁은 명상으로 열고 닫습니다. 운동은 밀기·하체·당기기를 나눠 회복일을 사이에 둡니다.</p></div>
+<div class="plan" id="plan"></div>
+<div class="principles">
+<h3>진행 원칙</h3>
+<ul>
+<li>마지막 세트에서 2~3회 더 할 여유가 남는 강도로 합니다.</li>
+<li>세트 기록이 2주 연속 쉬워지면 반복 수를 2회 늘리거나 템포를 느리게 합니다.</li>
+<li>육체노동이 많았던 날은 근력 대신 수요일·목요일 회복 루틴으로 바꿔도 됩니다.</li>
+<li>명상은 길이보다 매일 앉는 것이 먼저입니다. 5분만 해도 완료로 칩니다.</li>
+</ul>
+</div>
+</div>
+</section>
+<section id="view-log" hidden>
+<div style="display:flex;flex-direction:column;gap:18px">
+<div class="focus"><div class="eyebrow">최근 5주</div><h2>기록</h2></div>
+<div class="stats">
+<div class="stat"><b id="stWeek">0</b><span>이번 주 세션</span></div>
+<div class="stat"><b id="stMin">0</b><span>이번 주 분</span></div>
+<div class="stat"><b id="stBest">0</b><span>최장 연속</span></div>
+</div>
+<div class="heat" id="heat"></div>
+<div class="legend">적음 <i style="background:var(--surface-2)"></i><i style="background:color-mix(in srgb,var(--moss) 30%,var(--surface-2))"></i><i style="background:color-mix(in srgb,var(--moss) 60%,var(--surface-2))"></i><i style="background:var(--moss)"></i> 모두 완료</div>
+<div class="sync" id="sync">이 폰에 저장됩니다</div>
+</div>
+</section>
+</div>
+<div class="tabbar">
+<nav role="tablist">
+<button class="tab" role="tab" id="tab-today" data-v="today" aria-selected="true">
+<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>오늘</button>
+<button class="tab" role="tab" id="tab-plan" data-v="plan" aria-selected="false">
+<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>주간 플랜</button>
+<button class="tab" role="tab" id="tab-log" data-v="log" aria-selected="false">
+<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>기록</button>
+</nav>
+</div>
+<div class="sheet" id="sheet" hidden><div class="sheet-in" id="sheetIn"></div></div>
+<div class="toast" id="toast" hidden></div>
+<script>
+(function(){
+const DAYS=['일','월','화','수','목','금','토'];
+const MED={
+am:{id:'am',kind:'med',title:'아침 호흡 명상',sub:'박스 호흡 4·4·4·4',time:'기상 직후',min:10,durs:[5,10,15],
+pattern:[4,4,4,4],labels:['들이쉬기','멈춤','내쉬기','멈춤'],
+cues:['허리를 세우고 앉아 어깨 힘을 뺍니다. 눈은 감거나 바닥 1m 앞을 봅니다.','코로 들이쉬고, 코로 내쉽니다. 원이 커지면 들이쉬고 작아지면 내쉽니다.','숫자를 세는 데만 주의를 둡니다. 생각이 떠오르면 알아차리고 숫자로 돌아옵니다.','배가 부풀고 꺼지는 감각을 함께 느껴봅니다.','오늘 가장 먼저 할 한 가지를 떠올리고, 천천히 눈을 뜹니다.']},
+pm:{id:'pm',kind:'med',title:'저녁 바디스캔',sub:'4·7·8 호흡 + 몸 훑기',time:'잠들기 전',min:10,durs:[5,10,15],
+pattern:[4,7,8],labels:['들이쉬기','멈춤','내쉬기'],
+cues:['누운 자세로 팔을 몸 옆에 둡니다. 세 번 길게 내쉽니다.','발바닥과 발가락. 무게, 온도, 저림을 그대로 느낍니다.','종아리와 무릎, 허벅지. 오늘 버틴 다리의 긴장을 확인합니다.','허리와 엉덩이. 바닥에 닿는 면을 따라 힘을 내려놓습니다.','배와 가슴. 숨이 드나드는 움직임을 지켜봅니다.','손, 팔, 어깨. 일하며 쌓인 뻐근함에 숨을 보냅니다.','목, 턱, 이마. 턱을 살짝 벌리고 미간을 풉니다.','몸 전체를 한 번에 느끼며, 호흡을 자연스럽게 둡니다.']},
+sun:{id:'am',kind:'med',title:'일요 관찰 명상',sub:'호흡을 세지 않고 지켜보기',time:'오전 중',min:20,durs:[10,20,30],
+pattern:[5,5],labels:['들이쉬기','내쉬기'],
+cues:['편하게 앉아 호흡을 조절하지 않고 지켜봅니다.','소리가 들리면 "소리"라고 이름 붙이고 호흡으로 돌아옵니다.','생각이 오면 "생각", 감정이 오면 "감정". 붙잡지 않고 흘려보냅니다.','지난 한 주에서 잘 버틴 순간 하나를 떠올려 봅니다.','다음 주에 지키고 싶은 태도 한 가지를 정합니다.','호흡 세 번을 크게 쉬고 마무리합니다.']}
+};
+const W={
+push:{title:'상체 밀기 + 코어',min:35,rest:75,focus:'가슴 · 어깨 · 삼두',
+warm:['팔 돌리기 앞뒤 각 15회','캣카우 10회','무릎 푸시업 10회'],
+ex:[{n:'푸시업',s:4,r:'10–15회',p:'몸통을 일직선으로. 가슴이 주먹 하나 높이까지 내려갑니다.'},
+{n:'파이크 푸시업',s:3,r:'8–10회',p:'엉덩이를 높게 들어 머리를 손 사이로 내립니다.'},
+{n:'의자 딥스',s:3,r:'10–12회',p:'팔꿈치를 뒤로 모으고 어깨가 귀로 올라가지 않게.'},
+{n:'플랭크',s:3,r:'40초',p:'엉덩이를 조이고 배꼽을 척추 쪽으로 당깁니다.'}],
+cool:['가슴 스트레칭 30초 × 2','삼두 스트레칭 좌우 30초']},
+cardio:{title:'가벼운 유산소 + 모빌리티',min:30,rest:30,focus:'심폐 · 관절 가동',
+warm:['제자리 걷기 2분'],
+ex:[{n:'빠르게 걷기 또는 가벼운 조깅',s:1,r:'20분',p:'대화가 가능한 속도(최대 심박 60–70%).'},
+{n:'월드 그레이티스트 스트레치',s:2,r:'좌우 5회',p:'런지 자세에서 팔을 천장으로 돌려 흉추를 엽니다.'},
+{n:'90/90 고관절 회전',s:2,r:'10회',p:'앉은 채로 무릎을 좌우로 넘기며 고관절을 풉니다.'}],
+cool:['종아리 스트레칭 좌우 30초']},
+legs:{title:'하체 근력',min:40,rest:90,focus:'대퇴 · 둔근 · 종아리',
+warm:['맨몸 스쿼트 15회','레그 스윙 좌우 10회','힙 서클 10회'],
+ex:[{n:'스쿼트',s:4,r:'15–20회',p:'무릎이 발끝 방향을 따라가고 발뒤꿈치로 밀어 올립니다.'},
+{n:'리버스 런지',s:3,r:'좌우 10회',p:'뒤로 딛어 앞 무릎이 90도가 되게. 상체는 세웁니다.'},
+{n:'싱글 레그 힙브릿지',s:3,r:'좌우 12회',p:'정점에서 1초 멈추고 엉덩이를 조입니다.'},
+{n:'카프 레이즈',s:3,r:'20회',p:'계단 끝에서 천천히 내리고 끝까지 올립니다.'},
+{n:'월 싯',s:2,r:'45초',p:'벽에 등을 대고 허벅지가 바닥과 평행하게.'}],
+cool:['대퇴사두 스트레칭 좌우 30초','햄스트링 스트레칭 좌우 30초']},
+recover:{title:'회복 요가',min:20,rest:20,focus:'허리 · 고관절 · 흉추',
+warm:['누워서 복식호흡 1분'],
+ex:[{n:'아기 자세',s:1,r:'60초',p:'이마를 바닥에 두고 등을 길게 늘입니다.'},
+{n:'비둘기 자세',s:2,r:'좌우 45초',p:'앞 정강이를 매트와 나란히 두고 골반을 내립니다.'},
+{n:'누워서 척추 비틀기',s:2,r:'좌우 45초',p:'무릎을 한쪽으로 넘기고 반대 어깨는 바닥에.'},
+{n:'다운독 → 코브라',s:2,r:'8회',p:'호흡에 맞춰 천천히 오갑니다.'}],
+cool:['송장 자세 2분']},
+pull:{title:'상체 당기기 + 코어',min:35,rest:75,focus:'등 · 이두 · 복부',
+warm:['밴드 없이 Y-T-W 각 8회','데드행 20초'],
+ex:[{n:'턱걸이 또는 인버티드 로우',s:4,r:'5–10회',p:'어깨를 먼저 내리고 가슴을 바에 가져갑니다. 식탁 아래 로우로 대체 가능.'},
+{n:'슈퍼맨',s:3,r:'12회',p:'팔다리를 동시에 들고 2초 버팁니다.'},
+{n:'데드버그',s:3,r:'좌우 10회',p:'허리가 바닥에서 뜨지 않게 반대 팔다리를 뻗습니다.'},
+{n:'할로우 홀드',s:3,r:'30초',p:'어깨와 발을 띄우고 허리를 바닥에 붙입니다.'}],
+cool:['광배 스트레칭 좌우 30초','코브라 자세 30초']},
+hiit:{title:'인터벌 서킷',min:25,rest:60,focus:'전신 · 심폐',
+warm:['점핑잭 1분','인치웜 5회'],
+ex:[{n:'버피',s:4,r:'40초 / 20초 휴식',p:'속도보다 착지를 부드럽게.'},
+{n:'마운틴 클라이머',s:4,r:'40초 / 20초 휴식',p:'엉덩이가 들리지 않게 유지합니다.'},
+{n:'점프 스쿼트',s:4,r:'40초 / 20초 휴식',p:'무릎이 안쪽으로 모이지 않게.'},
+{n:'플랭크 잭',s:4,r:'40초 / 20초 휴식',p:'코어를 조인 채 다리만 벌렸다 모읍니다.'}],
+cool:['걷기 3분','전신 스트레칭 3분']}
+};
+const PLAN=[
+{theme:'휴식과 정리',desc:'운동은 쉬고 긴 명상으로 한 주를 돌아봅니다.',am:MED.sun,work:null,pm:MED.pm,note:['가벼운 산책','30분 정도 햇볕 아래 걸으면 회복에 도움이 됩니다.']},
+{theme:'밀기의 날',desc:'푸시업 계열로 상체 앞쪽을 단련합니다.',am:MED.am,work:W.push,pm:MED.pm,note:['기록','푸시업 마지막 세트 횟수를 기억해 두세요. 다음 주 목표가 됩니다.']},
+{theme:'순환의 날',desc:'심박을 가볍게 올리고 굳은 관절을 풉니다.',am:MED.am,work:W.cardio,pm:MED.pm,note:['강도','숨이 차서 말을 못 할 정도면 속도를 줄입니다.']},
+{theme:'하체의 날',desc:'한 주에서 가장 무거운 날입니다. 휴식을 충분히.',am:MED.am,work:W.legs,pm:MED.pm,note:['식사','운동 후 2시간 안에 단백질을 챙겨 드세요.']},
+{theme:'회복의 날',desc:'어제 쓴 다리와 허리를 풀어 줍니다.',am:MED.am,work:W.recover,pm:MED.pm,note:['대체','일이 고됐던 날은 이 루틴을 아무 요일에나 넣어도 됩니다.']},
+{theme:'당기기의 날',desc:'등과 코어로 자세를 받쳐 주는 근육을 키웁니다.',am:MED.am,work:W.pull,pm:MED.pm,note:['자세','육체노동으로 굽은 등을 펴는 데 가장 효과적인 날입니다.']},
+{theme:'불태우는 날',desc:'짧고 강하게. 한 주의 마무리 서킷입니다.',am:MED.am,work:W.hiit,pm:MED.pm,note:['안전','무릎이나 허리가 불편하면 점프 동작을 빼고 속도를 낮춥니다.']}
+];
+function sessionsFor(dow){const p=PLAN[dow];const a=[{key:'am',ref:p.am}];if(p.work)a.push({key:'work',ref:p.work});a.push({key:'pm',ref:p.pm});return a;}
+function ymd(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
+function addDays(d,n){const x=new Date(d);x.setDate(x.getDate()+n);return x;}
+const today=new Date();today.setHours(0,0,0,0);
+const TODAY=ymd(today);
+let log={}; // {date:{am:bool,work:bool,pm:bool,mins:number}}
+let selected=new Date(today);
+let db=null;
+try{const s=localStorage.getItem('sns-log');if(s)log=JSON.parse(s)||{};}catch(e){}
+function saveLocal(){try{localStorage.setItem('sns-log',JSON.stringify(log));}catch(e){}}
+const pending={};
+async function persist(date){
+saveLocal();
+if(!db)return;
+if(pending[date]){pending[date].again=true;return;}
+pending[date]={again:false};
+try{
+do{pending[date].again=false;await db.doc('days/'+date).set(Object.assign({},log[date]||{}));}
+while(pending[date].again);
+}catch(e){if(e&&e.code==='invalid_argument'){setSync('기록을 저장할 권한이 없습니다. 이 기기에만 남습니다.');db=null;}}
+finally{delete pending[date];}
+}
+function setSync(t){document.getElementById('sync').textContent=t;}
+function dayFrac(date){
+const d=new Date(date+'T00:00:00');const ss=sessionsFor(d.getDay());const e=log[date]||{};
+const n=ss.filter(s=>e[s.key]).length;return {n,t:ss.length};
+}
+function isFull(date){const f=dayFrac(date);return f.n===f.t;}
+function streak(){
+let d=new Date(today);if(!isFull(ymd(d)))d=addDays(d,-1);
+let c=0;while(isFull(ymd(d))&&c<3650){c++;d=addDays(d,-1);}return c;
+}
+function bestStreak(){
+const keys=Object.keys(log).sort();if(!keys.length)return 0;
+let best=0,cur=0,prev=null;
+for(const k of keys){if(!isFull(k)){cur=0;prev=null;continue;}
+const d=new Date(k+'T00:00:00');
+cur=(prev&&ymd(addDays(prev,1))===k)?cur+1:1;prev=d;best=Math.max(best,cur);}
+return best;
+}
+const $=id=>document.getElementById(id);
+const ICON={
+med:'<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M12 3c2 2.5 2 5 0 7-2-2-2-4.5 0-7Z"/><path d="M4 14c3 0 6 1.5 8 4 2-2.5 5-4 8-4-1 4-4 6-8 6s-7-2-8-6Z"/></svg>',
+work:'<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M6 8v8M18 8v8M3 10v4M21 10v4M6 12h12"/></svg>'
+};
+const CHECK='<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"><path d="m5 12 5 5 9-10"/></svg>';
+function render(){
+const ds=ymd(selected);const dow=selected.getDay();const p=PLAN[dow];
+$('dateLine').textContent=today.getFullYear()+'년 '+(today.getMonth()+1)+'월 '+today.getDate()+'일 '+DAYS[today.getDay()]+'요일';
+const h=new Date().getHours();
+$('greet').textContent=h<11?'좋은 아침입니다':h<18?'오늘의 루틴':'하루를 닫을 시간';
+$('streak').textContent=streak();
+// week strip (Mon..Sun of selected week)
+const mon=addDays(today,-((today.getDay()+6)%7));
+let w='';
+for(let i=0;i<7;i++){const d=addDays(mon,i);const k=ymd(d);const f=dayFrac(k);const C=2*Math.PI*9;
+w+=`<button class="wd${k===ds?' sel':''}${k===TODAY?' today':''}" data-d="${k}" aria-label="${d.getMonth()+1}월 ${d.getDate()}일 ${f.n}/${f.t} 완료">
+<span class="lab">${DAYS[d.getDay()]}</span><span class="dt num">${d.getDate()}</span>
+<svg class="ring" viewBox="0 0 22 22"><circle class="bgc" cx="11" cy="11" r="9"/><circle class="fg" cx="11" cy="11" r="9" stroke-dasharray="${C}" stroke-dashoffset="${C*(1-f.n/f.t)}" transform="rotate(-90 11 11)"/></svg></button>`;}
+$('week').innerHTML=w;
+$('focusEyebrow').textContent=(ds===TODAY?'오늘 · ':(selected.getMonth()+1)+'월 '+selected.getDate()+'일 · ')+DAYS[dow]+'요일';
+$('focusTitle').textContent=p.theme;
+$('focusDesc').textContent=p.desc;
+const e=log[ds]||{};
+$('sessions').innerHTML=sessionsFor(dow).map(s=>{
+const r=s.ref;const isMed=r.kind==='med';const done=!!e[s.key];
+const sub=isMed?r.sub:r.focus+' · '+r.ex.length+'가지 동작';
+const time=isMed?r.time+' · '+r.min+'분':'약 '+r.min+'분';
+return `<div class="sess ${isMed?'med':'work'}${done?' done':''}" role="button" tabindex="0" data-open="${s.key}">
+<div class="ico">${ICON[isMed?'med':'work']}</div>
+<div class="meta"><span class="t">${r.title}</span><span class="s">${sub}</span><span class="time">${time}</span></div>
+<button class="chk" data-toggle="${s.key}" aria-pressed="${done}" aria-label="${r.title} 완료 표시">${CHECK}</button></div>`;
+}).join('');
+$('note').innerHTML=`<b>${p.note[0]}</b><span>${p.note[1]}</span>`;
+// plan
+const order=[1,2,3,4,5,6,0];
+$('plan').innerHTML=order.map(i=>{const q=PLAN[i];
+return `<div class="pday${i===today.getDay()?' today':''}"><div class="d">${DAYS[i]}</div><div class="items">
+<div><b>${q.theme}</b></div>
+<div><span class="tag m">명상</span>${q.am.title} ${q.am.min}분 · 저녁 바디스캔 10분</div>
+<div>${q.work?`<span class="tag w">운동</span>${q.work.title} <span>약 ${q.work.min}분</span>`:'<span class="tag w">운동</span><span>휴식 · 가벼운 산책</span>'}</div>
+</div></div>`;}).join('');
+// log
+let wk=0,mins=0;
+for(let i=0;i<7;i++){const k=ymd(addDays(mon,i));const f=dayFrac(k);wk+=f.n;mins+=(log[k]&&log[k].mins)||0;}
+$('stWeek').textContent=wk;$('stMin').textContent=mins;$('stBest').textContent=bestStreak();
+const start=addDays(mon,-28);let hh=['월','화','수','목','금','토','일'].map(x=>`<div class="h">${x}</div>`).join('');
+for(let i=0;i<35;i++){const d=addDays(start,i);const k=ymd(d);const f=dayFrac(k);
+const fut=d>today;const r=f.n/f.t;const lv=fut||r===0?'':r<.5?' l1':r<1?' l2':' l3';
+hh+=`<div class="cell${lv}${fut?' fut':''}${k===TODAY?' tdy':''}" title="${k} · ${f.n}/${f.t}">${d.getDate()}</div>`;}
+$('heat').innerHTML=hh;
+}
+function toggle(key,val,addMins){
+const ds=ymd(selected);log[ds]=Object.assign({},log[ds]||{});
+const now=val===undefined?!log[ds][key]:val;
+log[ds][key]=now;
+if(addMins)log[ds].mins=(log[ds].mins||0)+addMins;
+render();persist(ds);
+if(now&&isFull(ds))toast('오늘 루틴을 모두 마쳤습니다');
+}
+let tt;function toast(t){const el=$('toast');el.textContent=t;el.hidden=false;clearTimeout(tt);tt=setTimeout(()=>el.hidden=true,2200);}
+document.addEventListener('click',ev=>{
+const t=ev.target.closest('[data-toggle]');
+if(t){ev.stopPropagation();toggle(t.dataset.toggle);return;}
+const o=ev.target.closest('[data-open]');if(o){openSession(o.dataset.open);return;}
+const d=ev.target.closest('[data-d]');if(d){selected=new Date(d.dataset.d+'T00:00:00');render();return;}
+const tb=ev.target.closest('.tab');if(tb){showView(tb.dataset.v);}
+});
+document.addEventListener('keydown',ev=>{
+if((ev.key==='Enter'||ev.key===' ')&&ev.target.matches('[data-open]')){ev.preventDefault();openSession(ev.target.dataset.open);}
+if(ev.key==='Escape'&&!$('sheet').hidden)closeSheet();
+});
+function showView(v){
+['today','plan','log'].forEach(x=>{$('view-'+x).hidden=x!==v;$('tab-'+x).setAttribute('aria-selected',x===v);});
+try{localStorage.setItem('sns-tab',v);}catch(e){}
+window.scrollTo(0,0);
+}
+let timer=null,wake=null,actx=null;
+function beep(f){try{actx=actx||new (window.AudioContext||window.webkitAudioContext)();const o=actx.createOscillator(),g=actx.createGain();o.type='sine';o.frequency.value=f||528;g.gain.setValueAtTime(.0001,actx.currentTime);g.gain.exponentialRampToValueAtTime(.2,actx.currentTime+.05);g.gain.exponentialRampToValueAtTime(.0001,actx.currentTime+1.4);o.connect(g).connect(actx.destination);o.start();o.stop(actx.currentTime+1.5);}catch(e){}}
+async function lock(){try{if(navigator.wakeLock)wake=await navigator.wakeLock.request('screen');}catch(e){wake=null;}}
+function unlock(){try{wake&&wake.release();}catch(e){}wake=null;}
+function fmt(s){s=Math.max(0,Math.ceil(s));return String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0');}
+function closeSheet(){clearInterval(timer);timer=null;unlock();$('sheet').hidden=true;document.body.style.overflow='';}
+const CLOSE='<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6l12 12M18 6 6 18"/></svg>';
+function openSession(key){
+const s=sessionsFor(selected.getDay()).find(x=>x.key===key);if(!s)return;
+$('sheet').hidden=false;document.body.style.overflow='hidden';$('sheet').scrollTop=0;
+if(s.ref.kind==='med')medSheet(s);else workSheet(s);
+}
+function medSheet(s){
+const m=s.ref;let total=m.min*60,elapsed=0,running=false,last=0;
+const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const cyc=m.pattern.reduce((a,b)=>a+b,0);
+$('sheetIn').innerHTML=`
+<div class="sheet-top"><div><div class="eyebrow">${m.time} · 명상</div><h2>${m.title}</h2><p class="sub">${m.sub}</p></div>
+<button class="iconbtn" id="x" aria-label="닫기">${CLOSE}</button></div>
+<div class="durs" id="durs">${m.durs.map(d=>`<button class="dur${d===m.min?' on':''}" data-m="${d}">${d}분</button>`).join('')}</div>
+<div class="breath">
+<div class="orb-wrap"><div class="orb-guide"></div><div class="orb" id="orb"></div><div class="orb-label" id="phase">준비</div></div>
+<div class="phase-count" id="pc">${m.pattern.join(' · ')}초 호흡</div>
+<div class="clock" id="clk">${fmt(total)}</div>
+<div class="bar"><i id="bar"></i></div>
+<div class="cue" id="cue">${m.cues[0]}</div>
+</div>
+<div class="controls"><button class="btn primary" id="go">시작</button><button class="btn" id="reset">처음부터</button></div>
+<div class="finish"><button class="btn" id="done">완료로 표시하고 닫기</button></div>`;
+const orb=$('orb');
+function paint(){
+const left=total-elapsed;$('clk').textContent=fmt(left);$('bar').style.width=(elapsed/total*100)+'%';
+const ci=Math.min(m.cues.length-1,Math.floor(elapsed/total*m.cues.length));$('cue').textContent=m.cues[ci];
+if(!running&&elapsed===0){orb.style.transform='scale(.45)';$('phase').textContent='준비';return;}
+let t=elapsed%cyc,i=0;while(t>=m.pattern[i]){t-=m.pattern[i];i++;}
+const lab=m.labels[i];const frac=t/m.pattern[i];
+let sc;if(lab==='들이쉬기')sc=.45+.55*frac;else if(lab==='내쉬기')sc=1-.55*frac;else sc=(m.labels[i-1]==='들이쉬기'||(i===0))?1:.45;
+if(lab==='멈춤')sc=m.labels[i-1]==='들이쉬기'?1:.45;
+orb.style.transform=reduce?'scale(.8)':'scale('+sc.toFixed(3)+')';
+$('phase').textContent=lab;$('pc').textContent=lab+' '+Math.ceil(m.pattern[i]-t)+'초';
+}
+function tick(){const n=performance.now();elapsed=Math.min(total,elapsed+(n-last)/1000);last=n;paint();
+if(elapsed>=total){clearInterval(timer);timer=null;running=false;unlock();beep(432);$('go').textContent='다시';$('phase').textContent='끝';
+toggle(s.key,true,Math.round(total/60));toast(m.title+' 완료');}}
+$('go').onclick=()=>{
+if(elapsed>=total){elapsed=0;}
+running=!running;
+if(running){last=performance.now();timer=setInterval(tick,100);lock();if(elapsed===0)beep(528);$('go').textContent='일시정지';}
+else{clearInterval(timer);timer=null;unlock();$('go').textContent='계속';}
+};
+$('reset').onclick=()=>{clearInterval(timer);timer=null;running=false;elapsed=0;$('go').textContent='시작';unlock();paint();};
+$('durs').onclick=e=>{const b=e.target.closest('[data-m]');if(!b||running)return;total=+b.dataset.m*60;elapsed=0;
+[...$('durs').children].forEach(x=>x.classList.toggle('on',x===b));paint();};
+$('x').onclick=closeSheet;
+$('done').onclick=()=>{const mins=Math.max(1,Math.round(elapsed/60));const was=(log[ymd(selected)]||{})[s.key];toggle(s.key,true,was?0:mins);closeSheet();};
+paint();
+}
+function workSheet(s){
+const w=s.ref;const state=w.ex.map(x=>Array(x.s).fill(false));let rest=0,restTotal=w.rest,started=null;
+$('sheetIn').innerHTML=`
+<div class="sheet-top"><div><div class="eyebrow">운동 · 약 ${w.min}분 · 세트 간 휴식 ${w.rest}초</div><h2>${w.title}</h2><p class="sub">${w.focus}</p></div>
+<button class="iconbtn" id="x" aria-label="닫기">${CLOSE}</button></div>
+<div class="rest" id="restBox"><div><div class="eyebrow">휴식 타이머</div><span id="restMsg">세트를 마치면 칸을 누르세요. 휴식이 자동으로 시작됩니다.</span></div><div class="clock num" id="rclk">${fmt(w.rest)}</div></div>
+<div class="block"><h3>준비 운동</h3><ul class="warm">${w.warm.map(x=>`<li>${x}</li>`).join('')}</ul></div>
+<div class="block"><h3>본 운동</h3>${w.ex.map((x,i)=>`
+<div class="ex"><div class="ex-head"><b>${x.n}</b><span class="num">${x.s}세트 × ${x.r}</span></div><p>${x.p}</p>
+<div class="sets">${Array.from({length:x.s},(_,j)=>`<button class="set" data-e="${i}" data-s="${j}" aria-pressed="false">${j+1}</button>`).join('')}</div></div>`).join('')}</div>
+<div class="block"><h3>마무리</h3><ul class="warm">${w.cool.map(x=>`<li>${x}</li>`).join('')}</ul></div>
+<div class="finish"><button class="btn ochre" id="done">운동 완료</button><button class="btn" id="later">닫기</button></div>`;
+function runRest(){clearInterval(timer);rest=restTotal;let last=performance.now();lock();
+$('restMsg').textContent='숨을 고르세요. 끝나면 소리가 납니다.';
+timer=setInterval(()=>{const n=performance.now();rest-=(n-last)/1000;last=n;$('rclk').textContent=fmt(rest);
+if(rest<=0){clearInterval(timer);timer=null;beep(660);$('rclk').textContent=fmt(restTotal);$('restMsg').textContent='다음 세트를 시작하세요.';}},200);}
+$('sheetIn').addEventListener('click',e=>{const b=e.target.closest('.set');if(!b)return;
+const i=+b.dataset.e,j=+b.dataset.s;state[i][j]=!state[i][j];b.classList.toggle('on',state[i][j]);b.setAttribute('aria-pressed',state[i][j]);
+if(!started)started=Date.now();
+if(state[i][j]){actx=actx||null;runRest();}
+const all=state.every(a=>a.every(Boolean));if(all)$('restMsg').textContent='모든 세트를 마쳤습니다. 마무리 스트레칭 후 완료를 누르세요.';});
+$('x').onclick=closeSheet;$('later').onclick=closeSheet;
+$('done').onclick=()=>{const was=(log[ymd(selected)]||{})[s.key];const mins=started?Math.max(1,Math.round((Date.now()-started)/60000)):w.min;
+toggle(s.key,true,was?0:mins);closeSheet();toast(w.title+' 완료');};
+}
+try{const t=localStorage.getItem('sns-tab');if(t&&t!=='today')showView(t);}catch(e){}
+render();
+if('serviceWorker' in navigator){window.addEventListener('load',()=>{navigator.serviceWorker.register('sw.js').catch(()=>{});});}
+})();
+</script>
+</body>
+</html>
