@@ -1039,6 +1039,69 @@ const msgs=S.ai.turns.concat([{role:'user',content}]);S.ai.loading=true;S.ai.err
 try{const txt=await aiCall(msgs);S.ai.turns=msgs.concat([{role:'assistant',content:txt}]);S.ai.last=aiParse(txt);}
 catch(e){S.ai.err=e.message==='NOKEY'?'NOKEY':e.message;}
 S.ai.loading=false;draw();}
+/* ---------- 자동 가이드 (AI 없이, 규칙 기반) ---------- */
+const LG_RULES=[
+['aon',/(완전히?|전부 다|다 망|하나도|아무것도|완벽하?|빵점|0점|실패작|끝났|망했)/],
+['og',/(항상|늘|맨날|언제나|매번|절대|평생|이번에도|또 (이러|그러|망|실수))/],
+['mf',/(그것만|그거 하나|계속 생각나|머리에서 안 떠나|자꾸 떠올라)/],
+['dp',/(운이 좋았|별거 아니|누구나 하는|그 정도는|어쩌다 된)/],
+['mr',/((나|날|나를) (싫어|무시|한심하게|이상하게|우습게)|비웃|속으로 .*(생각|욕)|눈치|날 어떻게 볼)/],
+['fp',/((할|될|망할|끝날|못 ?할|떠날|싫어할|잘릴|끊길|실패할|틀릴|떨어질|안 될) ?(거야|거다|것이다|거 같|것 같|게 뻔))/],
+['mag',/(최악|끔찍|인생 끝|큰일|감당 못|미칠 것|돌이킬 수 없)/],
+['er',/(느껴지니까|느낌이 (들|드)니까|기분이 .*니까|같은 기분|불안하니까|싫은 걸 보니)/],
+['sh',/(해야 ?(해|하는데|했|한다)|했어야|하면 안 ?(돼|되)|말았어야|당연히|마땅히)/],
+['lab',/((나|난|내가)\s?(는|은)?\s?.{0,8}(바보|한심|쓰레기|패배자|루저|멍청|무능|쓸모없|실패자|찐따|병신))|(자격이 없)|(놈이야|인간이야)/],
+['sb',/(내 탓|내 잘못|나 때문|다 나 때문|내가 다 망)/],
+['ob',/((걔|쟤|그 사람|그 인간|너|사장|팀장|부모|엄마|아빠).{0,6}때문)|(남 탓)/]];
+const LG_Q={aon:'0점 아니면 100점이 아니라면, 이번 일은 몇 점쯤이었나요?',og:'"항상"이 정말 맞나요? 그렇지 않았던 때를 하나만 떠올려 보세요.',mf:'같은 날 괜찮았던 일 세 가지는 무엇이었나요?',dp:'친구가 같은 걸 해냈다면 "별거 아니"라고 말했을까요?',mr:'그 사람이 정말 그렇게 생각한다는 증거가 있나요? 직접 확인해 봤나요?',fp:'이 예측이 틀렸던 적은 없나요? 실제로 일어날 확률을 숫자로 매기면?',mag:'1년 뒤에도 이 일이 지금만큼 크게 느껴질까요?',er:'느낌을 빼고 사실만 적으면 무엇이 남나요?',sh:'"해야 했다"를 "했다면 좋았겠다"로 바꾸면 기분이 어떻게 달라지나요?',lab:'딱지 대신, 오늘 실제로 한 구체적인 행동은 무엇이었나요?',sb:'이 일에서 내 몫은 몇 %이고, 나머지는 어떤 요인들인가요?',ob:'이 일에서 내 몫이 아주 조금이라도 있다면 무엇일까요?'};
+const LG_H={aon:'잘된 부분과 고칠 부분을 한 문장에 함께 넣어 보세요.',og:'"항상/절대" 대신 "이번에는"으로 범위를 좁혀 보세요.',mf:'안 좋았던 점 하나와 괜찮았던 점 하나를 나란히 적어 보세요.',dp:'내가 해낸 일을 "운"이 아니라 "내가 한 행동"으로 적어 보세요.',mr:'확인된 사실과 내 추측을 나눠서 적어 보세요.',fp:'예측 대신 "아직 모른다, 그리고 대비할 수 있는 건 ○○"으로 써 보세요.',mag:'크기를 현실적으로: "불편하지만 감당할 수 있다"처럼 써 보세요.',er:'"그렇게 느껴지지만, 사실은 ○○"의 형태로 써 보세요.',sh:'"~했다면 좋았겠다. 다음엔 ○○해 보자"로 써 보세요.',lab:'사람 전체가 아니라 "그 순간의 행동"을 주어로 써 보세요.',sb:'내 몫은 인정하되, 다음에 바꿀 한 가지로 마무리해 보세요.',ob:'상대의 몫과 내가 할 수 있는 한 가지를 함께 적어 보세요.'};
+const LG_EMO={'불안':['잘해내고 싶은 마음',[27,16,36]],'분노':['부당함을 알아보고 나를 지키려는 마음',[47,23,49]],'수치심':['스스로에게 기준이 있다는 뜻',[21,18,44]],'당황':['실수를 신경 쓰는 성실함',[18,21,44]],'외로움':['사람과 이어지고 싶은 마음',[34,42,22]],'절망':['그만큼 오래 버텨 왔다는 뜻',[34,22,5]],'슬픔':['그만큼 소중했다는 뜻',[34,22,5]],'죄책감':['책임감',[4,8,21]],'무가치감':['잘 살고 싶은 마음',[21,14,12]],'좌절':['목표에 진지하다는 뜻',[10,35,6]]};
+const LG_CTX=[[/(미루|미뤄|시작을 못|손을 못|귀찮|해야 하는데)/,[35,29],'미루기'],[/(야식|술|폰|유튜브|담배|게임|쇼핑|과식|릴스|숏폼)/,[30,31,29],'습관·유혹'],[/(친구|여자친구|남자친구|애인|부모|엄마|아빠|사장|팀장|동료|학생|학부모|가족|걔|쟤)/,[26,48,49],'관계'],[/(발표|면접|시험|수업|사람들 앞|모임)/,[27,36,20],'평가 불안']];
+function jo(w,a,b){const c=w.charCodeAt(w.length-1);return w+((c>=0xAC00&&c<=0xD7A3&&(c-0xAC00)%28)?a:b);}
+const LG_LAB={'바보':'바보','한심':'한심한 사람','쓰레기':'쓰레기','패배자':'패배자','루저':'루저','멍청':'멍청한 사람','무능':'무능한 사람','쓸모없':'쓸모없는 사람','실패자':'실패자','찐따':'찐따','병신':'병신','자격이 없':'자격 없는 사람'};
+const LG_RISK=/(죽고 ?싶|죽을래|자살|사라지고 ?싶|없어지고 ?싶|자해|살기 ?싫|끝내고 ?싶|목숨)/;
+function lgFirst(n,ctx){const lab=ctx.lab;
+const F={12:lab?`"${lab}"의 정의를 누구에게나 적용되게 한 줄로 써 보세요.`:'나에게 붙인 딱지의 정의를 한 줄로 써 보세요.',
+14:`"좋은 ${ctx.role||'○○'}"의 구체적 특징 다섯 가지부터 적어 보세요.`,4:'같은 일을 겪은 친구에게 할 말을 그대로 적어 보세요.',5:'이 생각의 찬성 증거와 반대 증거를 두 칸에 나눠 적어 보세요.',
+19:'생각을 "너는 ~"으로 바꿔 읽고, "나는 ~"으로 한 문장 대답해 보세요.',27:'"그다음엔 어떻게 되는데?"를 세 번만 이어서 적어 보세요.',35:'이 일의 10분짜리 첫 조각을 하나 적어 보세요.',30:'나를 유혹하는 대사 세 개를 먼저 적어 보세요.'};
+return F[n]||(GUIDE[n]?GUIDE[n][0]:byN(n).d);}
+function localGuide(){read();const txt=[S.sit,S.thought,S.r1,S.r2].join(' ');
+if(!txt.trim())return null;
+const safety=LG_RISK.test(txt);
+const ds=[];let lab='';
+LG_RULES.forEach(([k,re])=>{const m=(S.thought+' '+S.sit).match(re);if(m){ds.push({key:k,why:`"${m[0].trim()}"`});if(k==='lab'){const w=m[0].match(/(바보|한심|쓰레기|패배자|루저|멍청|무능|쓸모없|실패자|찐따|병신|자격이 없)/);lab=w?LG_LAB[w[0]]:'';if(w)ds[ds.length-1].why=`"${w[0]}"`;}}});
+const role=(txt.match(/(선생|강사|과외|아빠|아들|딸|남편|친구|동료|직원|형|오빠)/)||[])[0];
+const ek=Object.keys(S.emo).sort((a,b)=>S.emo[b]-S.emo[a]);
+const score={};const add=(n,w)=>{score[n]=(score[n]||0)+w;};
+ds.forEach(d=>(MAP[d.key]||[]).forEach((n,i)=>add(n,10-i)));
+ek.slice(0,2).forEach(e=>{const x=LG_EMO[e];if(x)x[1].forEach((n,i)=>add(n,6-i));});
+const ctxHit=[];LG_CTX.forEach(([re,ns,name])=>{if(re.test(txt)){ctxHit.push(name);ns.forEach((n,i)=>add(n,8-i));}});
+// 과거에 가장 효과 좋았던 기법 가산
+const past=M.entries.filter(e=>e.tech&&e.b0!=null&&e.b1!=null).sort((a,b)=>(b.b0-b.b1)-(a.b0-a.b1));
+if(past[0]&&past[0].b0-past[0].b1>=20)add(past[0].tech,5);
+[1,2].forEach(n=>delete score[n]);
+let tn=Object.keys(score).map(Number).sort((a,b)=>score[b]-score[a]).slice(0,3);
+if(!tn.length)tn=[3,5,4];
+const techniques=tn.map(n=>{const why=[];ds.forEach(d=>{if((MAP[d.key]||[]).includes(n))why.push(DN[d.key]);});
+ek.slice(0,2).forEach(e=>{if(LG_EMO[e]&&LG_EMO[e][1].includes(n))why.push(e);});
+LG_CTX.forEach(([re,ns,name])=>{if(ns.includes(n)&&ctxHit.includes(name))why.push(name);});
+if(past[0]&&past[0].tech===n)why.push('지난번 효과가 좋았던 기법');
+return {n,why:why.length?[...new Set(why)].join(', ')+'에 잘 맞아요':'기본으로 잘 듣는 기법이에요',first_step:lgFirst(n,{lab,role})};});
+let reply='';
+if(ek.length){const e=ek[0];reply+=`${e} ${S.emo[e]}%면 꽤 무거운 상태예요. `;if(LG_EMO[e])reply+=`그 ${jo(e,'은','는')} 한편으로 ${LG_EMO[e][0]}이기도 해요. `;}
+else reply+='적어 주신 걸 보면 마음이 꽤 불편한 상황이에요. ';
+reply+=ds.length?`생각 속에 ${jo(ds.slice(0,3).map(d=>DN[d.key]).join(', '),'이','가')} 보여요. 아래 질문으로 하나씩 따져 보세요.`:'눈에 띄는 왜곡 표현은 찾지 못했어요. 5단계에서 목록을 보며 직접 골라 보세요.';
+// 패턴
+const pat=[];const cnt={};M.entries.forEach(e=>(e.dist||[]).forEach(d=>cnt[d]=(cnt[d]||0)+1));
+const top=Object.keys(cnt).sort((a,b)=>cnt[b]-cnt[a])[0];if(top&&cnt[top]>=2)pat.push(`지난 일지에서 ${jo(DN[top],'이','가')} ${cnt[top]}번 나왔어요. 자주 걸리는 생각 습관일 수 있어요.`);
+if(past[0]&&past[0].b0-past[0].b1>=20)pat.push(`지난번 ${jo(byN(past[0].tech).t,'을','를')} 썼을 때 믿음이 ${past[0].b0}→${past[0].b1}로 가장 많이 줄었어요.`);
+const d7=[],p7=[];for(let i=0;i<14;i++){const v=M.counts[G.ymd(G.addDays(new Date(),-i))]||0;(i<7?d7:p7).push(v);}
+const s7=d7.reduce((a,b)=>a+b,0),sp=p7.reduce((a,b)=>a+b,0);if(s7+sp>=5)pat.push(`부정적 생각 알아차림이 지난주 ${sp}회 → 이번 주 ${s7}회예요.`);
+const questions=ds.slice(0,3).map(d=>d.key==='lab'&&lab?`"${lab}"${/[\uAC00-\uD7A3]/.test(lab.slice(-1))&&(lab.charCodeAt(lab.length-1)-0xAC00)%28?'이라는':'라는'} 딱지 대신, 오늘 실제로 한 구체적인 행동은 무엇이었나요?`:LG_Q[d.key]);
+if(!questions.length)questions.push('이 생각은 100% 사실인가요? 친구라면 뭐라고 말해 줄까요?');
+const reframe_hints=ds.slice(0,3).map(d=>LG_H[d.key]);if(!reframe_hints.length)reframe_hints.push('100% 사실이면서, 읽었을 때 처음 생각이 덜 믿어지는 문장이 좋아요.');
+if(safety)reply='지금 많이 힘드신 것 같아요. 이런 생각이 들 때는 기법보다 안전이 먼저예요. 혼자 버티지 말고 가까운 사람이나 상담 전화에 꼭 연락해 주세요.';
+return {local:true,reply,pattern:pat.join(' '),distortions:safety?[]:ds.slice(0,4),techniques:safety?[]:techniques,questions:safety?[]:questions,reframe_hints:safety?[]:reframe_hints,safety};}
 function chatPrompt(){read();return `나는 "고요와 근력"이라는 앱으로 데이비드 번스식 인지행동치료(CBT) 기분 일지를 쓰고 있어. 아래 일지를 보고 코치처럼 도와줘.
 
 원하는 것:
@@ -1068,7 +1131,7 @@ if(A.loading)return `<div class="aibox"><b>✦ AI가 읽고 있어요…</b><p c
 if(A.err)return `<div class="aibox warn"><b>AI 호출 실패</b><p class="sub" style="margin:0">${esc(A.err)}</p></div>`;
 const r=A.last;if(!r)return '';
 const ds=(r.distortions||[]).filter(d=>DN[d.key]),ts=(r.techniques||[]).filter(t=>byN(+t.n));
-return `<details class="aibox" open><summary><b>✦ AI 가이드</b></summary>
+return `<details class="aibox" open><summary><b>${r.local?'✦ 자동 가이드 (오프라인)':'✦ AI 가이드'}</b></summary>
 ${r.safety?`<div class="verdict warn"><b>지금 많이 힘드시다면 혼자 버티지 마세요.</b><br>자살예방상담전화 <b>109</b> (24시간) · 정신건강위기상담 <b>1577-0199</b></div>`:''}
 <p style="margin:0;white-space:pre-wrap">${esc(r.reply||'')}</p>
 ${r.pattern?`<p class="sub" style="margin:0">🔁 ${esc(r.pattern)}</p>`:''}
@@ -1076,8 +1139,7 @@ ${ds.length?`<div class="lbl">보이는 왜곡</div><ul class="ailist">${ds.map(
 ${ts.length?`<div class="lbl">추천 기법</div>${ts.map(t=>`<div class="aitech"><div><b>${+t.n}. ${esc(byN(+t.n).t)}</b><br><span class="sub">${esc(t.why||'')}</span>${t.first_step?`<br><span>→ ${esc(t.first_step)}</span>`:''}</div><button class="btn sm primary" data-aitech="${+t.n}">이 기법으로</button></div>`).join('')}`:''}
 ${(r.questions||[]).length?`<div class="lbl">스스로에게 물어보기</div><ul class="ailist">${r.questions.map(q=>`<li>${esc(q)}</li>`).join('')}</ul>`:''}
 ${(r.reframe_hints||[]).length?`<div class="lbl">새 생각을 쓸 때</div><ul class="ailist">${r.reframe_hints.map(q=>`<li>${esc(q)}</li>`).join('')}</ul>`:''}
-<div class="addrow"><input type="text" id="aiQ" placeholder="AI에게 더 물어보기"><button class="btn sm" data-aiask>보내기</button></div>
-<p class="hint" style="margin:0">AI의 답은 참고용입니다. 판단은 직접 하세요.</p></details>`;}
+${r.local?'<p class="hint" style="margin:0">적은 문장의 표현과 지난 기록을 규칙으로 분석한 추천이에요. 참고만 하고 판단은 직접 하세요.</p>':'<div class="addrow"><input type="text" id="aiQ" placeholder="AI에게 더 물어보기"><button class="btn sm" data-aiask>보내기</button></div>\n<p class="hint" style="margin:0">AI의 답은 참고용입니다. 판단은 직접 하세요.</p>'}</details>`;}
 const STEPS=['상황','감정','생각','긍정적 재구성','왜곡 찾기','기법 적용','새로운 생각','결과'];
 sheet('생각 하나 풀어보기','','','');
 function read(){const s=S.step;
@@ -1121,7 +1183,7 @@ ${ek.map(k=>`<div class="row"><span>${k}</span><div class="bars"><i class="b0" s
 <div class="pill"><i style="background:var(--ochre)"></i>처음 <i style="background:var(--moss)"></i>지금</div>
 <div class="bubble me"><small>새 생각 · 믿음 ${S.posB}%</small>${esc(S.pos)}</div>`;}
 h+=aiPanel();
-h+=`<div class="aibtns">${s<7&&AI.key?`<button class="btn ai" id="wai"${S.ai.loading?' disabled':''}>✦ AI 가이드${S.ai.last?' 다시 받기':' 받기'}</button>`:''}${s<7&&!AI.key?`<button class="btn ai" id="wai">✦ AI 가이드 받기</button>`:''}<button class="btn" id="wclaude">Claude 앱에서 물어보기 (구독)</button></div>`;
+h+=`<div class="aibtns">${s<7?`<button class="btn ai" id="wlocal">✦ 자동 가이드 받기 (무료)</button>`:''}${s<7&&AI.key?`<button class="btn ai" id="wai"${S.ai.loading?' disabled':''}>✦ AI 가이드${S.ai.last&&!S.ai.last.local?' 다시 받기':' 받기'}</button>`:''}<button class="btn" id="wclaude">Claude 앱에서 물어보기 (구독)</button></div>`;
 h+=`<div class="finish">${s===7?`<button class="btn primary" id="wsave">저장하고 닫기</button><button class="btn" id="wmore">다른 기법 더 해보기</button>`:`<button class="btn primary" id="wnext">${s===6?'결과 보기':'다음'}</button>${s?'<button class="btn" id="wprev">이전</button>':''}`}</div>`;
 body(h,s!==lastStep);lastStep=s;
 if($('wnext'))$('wnext').onclick=next;if($('wprev'))$('wprev').onclick=()=>{read();S.step--;draw();};
@@ -1136,6 +1198,7 @@ if(s===2&&!S.thought.trim()){G.toast('생각을 적어 주세요');return;}
 if(s===6&&!S.pos.trim()){G.toast('새 생각을 적어 주세요');return;}
 S.step++;draw();}
 $('sheetIn').onclick=e=>{if(e.target.id==='wai'){aiAsk();return;}
+if(e.target.id==='wlocal'){const g=localGuide();if(!g){G.toast('상황이나 생각을 먼저 조금 적어 주세요');return;}S.ai.last=g;S.ai.err='';S.ai.copy='';draw();setTimeout(()=>{const b=$('sheetIn').querySelector('.aibox');if(b)b.scrollIntoView({behavior:'smooth',block:'start'});},50);return;}
 if(e.target.id==='wclaude'){toClaude();return;}
 if(e.target.closest('[data-aicopysel]')){const t=$('aiCopy');t.focus();t.select();try{document.execCommand('copy');G.toast('복사했어요');}catch(err){}return;}
 if(e.target.closest('[data-aiopen]')){window.open('https://claude.ai/new','_blank');return;}
