@@ -262,6 +262,10 @@ select{font:inherit;color:var(--ink);background:var(--surface);border:1px solid 
 .ailist{margin:0;padding-left:18px;display:flex;flex-direction:column;gap:4px}
 .aitech{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center;background:var(--bg);border-radius:12px;padding:10px 12px}
 .aitech .sub{font-size:13px;color:var(--muted)}
+.emog{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.eg{display:flex;flex-direction:column;align-items:flex-start;gap:1px;text-align:left;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:8px 10px}
+.eg b{font-size:14px}.eg span{font-size:11px;color:var(--muted);line-height:1.35}
+.eg.on{background:var(--moss-soft);border-color:var(--moss)}.eg.on b{color:var(--moss)}
 .aibtns{display:flex;flex-direction:column;gap:8px}
 .aibtns .btn{width:100%}
 .sheet{overscroll-behavior:contain}.sheet,.sheet *{overflow-anchor:none}
@@ -641,7 +645,8 @@ const DN=Object.fromEntries(DIST.map(d=>[d[0],d[1]]));
 const MAP={aon:[10,14,4,5,9,13,19,21,17],og:[5,9,13,12,4,19,15,7],mf:[5,13,14,4,19,15,3],dp:[5,4,13,6,19,21],
 mr:[7,6,5,20,19,26],fp:[6,27,5,34,35,20,39],mag:[4,17,23,6,21,19,22],er:[6,5,3,19,4,28],
 sh:[11,29,4,21,25,9],lab:[12,13,14,11,21,19],sb:[8,4,21,29,19,13],ob:[8,47,48,49,26,50]};
-const EMO=['슬픔','불안','죄책감','수치심','무가치감','외로움','당황','절망','좌절','분노'];
+const EMO_G=[['슬픔','우울·울적·서글픔'],['불안','걱정·공포·겁·긴장'],['죄책감','후회·수치심'],['열등감','무가치감·부족함·무능감'],['외로움','거절감·버림받은 느낌'],['당황','창피·굴욕감·민망함'],['절망','낙담·비관·희망 없음'],['좌절','막힘·패배감·답답함'],['분노','짜증·억울함·원망']];
+const EMO=EMO_G.map(g=>g[0]);const EMO_SUB=Object.fromEntries(EMO_G);
 const VALUES=['책임감','높은 기준','사람을 아끼는 마음','정직함','현실을 보는 눈','성장하고 싶은 마음','나를 지키려는 마음','겸손함'];
 const BELIEFS=['완벽주의','남들이 완벽을 기대한다는 생각','성취 중독','인정 중독','사랑 중독','거절 공포','순종(남을 기쁘게 해야 함)','갈등 공포','특권 의식','자기 비난','타인 비난','진실 추구(내가 옳아야 함)','무가치감','절망감','스포트라이트 오류(모두가 날 본다)','감정 공포증'];
 const CATS={base:'기본 도구',comp:'동정심',fact:'사실 기반',logic:'논리 기반',sem:'의미론적',quant:'정량적',humor:'유머 기반',role:'역할극',phil:'철학·정신',vis:'시각 연상',disc:'발견하기',motiv:'동기 부여',expo:'노출',rel:'대인 관계'};
@@ -1055,7 +1060,7 @@ const LG_RULES=[
 ['ob',/((걔|쟤|그 사람|그 인간|너|사장|팀장|부모|엄마|아빠).{0,6}때문)|(남 탓)/]];
 const LG_Q={aon:'0점 아니면 100점이 아니라면, 이번 일은 몇 점쯤이었나요?',og:'"항상"이 정말 맞나요? 그렇지 않았던 때를 하나만 떠올려 보세요.',mf:'같은 날 괜찮았던 일 세 가지는 무엇이었나요?',dp:'친구가 같은 걸 해냈다면 "별거 아니"라고 말했을까요?',mr:'그 사람이 정말 그렇게 생각한다는 증거가 있나요? 직접 확인해 봤나요?',fp:'이 예측이 틀렸던 적은 없나요? 실제로 일어날 확률을 숫자로 매기면?',mag:'1년 뒤에도 이 일이 지금만큼 크게 느껴질까요?',er:'느낌을 빼고 사실만 적으면 무엇이 남나요?',sh:'"해야 했다"를 "했다면 좋았겠다"로 바꾸면 기분이 어떻게 달라지나요?',lab:'딱지 대신, 오늘 실제로 한 구체적인 행동은 무엇이었나요?',sb:'이 일에서 내 몫은 몇 %이고, 나머지는 어떤 요인들인가요?',ob:'이 일에서 내 몫이 아주 조금이라도 있다면 무엇일까요?'};
 const LG_H={aon:'잘된 부분과 고칠 부분을 한 문장에 함께 넣어 보세요.',og:'"항상/절대" 대신 "이번에는"으로 범위를 좁혀 보세요.',mf:'안 좋았던 점 하나와 괜찮았던 점 하나를 나란히 적어 보세요.',dp:'내가 해낸 일을 "운"이 아니라 "내가 한 행동"으로 적어 보세요.',mr:'확인된 사실과 내 추측을 나눠서 적어 보세요.',fp:'예측 대신 "아직 모른다, 그리고 대비할 수 있는 건 ○○"으로 써 보세요.',mag:'크기를 현실적으로: "불편하지만 감당할 수 있다"처럼 써 보세요.',er:'"그렇게 느껴지지만, 사실은 ○○"의 형태로 써 보세요.',sh:'"~했다면 좋았겠다. 다음엔 ○○해 보자"로 써 보세요.',lab:'사람 전체가 아니라 "그 순간의 행동"을 주어로 써 보세요.',sb:'내 몫은 인정하되, 다음에 바꿀 한 가지로 마무리해 보세요.',ob:'상대의 몫과 내가 할 수 있는 한 가지를 함께 적어 보세요.'};
-const LG_EMO={'불안':['잘해내고 싶은 마음',[27,16,36]],'분노':['부당함을 알아보고 나를 지키려는 마음',[47,23,49]],'수치심':['스스로에게 기준이 있다는 뜻',[21,18,44]],'당황':['실수를 신경 쓰는 성실함',[18,21,44]],'외로움':['사람과 이어지고 싶은 마음',[34,42,22]],'절망':['그만큼 오래 버텨 왔다는 뜻',[34,22,5]],'슬픔':['그만큼 소중했다는 뜻',[34,22,5]],'죄책감':['책임감',[4,8,21]],'무가치감':['잘 살고 싶은 마음',[21,14,12]],'좌절':['목표에 진지하다는 뜻',[10,35,6]]};
+const LG_EMO={'불안':['잘해내고 싶은 마음',[27,16,36]],'분노':['부당함을 알아보고 나를 지키려는 마음',[47,23,49]],'수치심':['스스로에게 기준이 있다는 뜻',[21,18,44]],'당황':['실수를 신경 쓰는 성실함',[18,21,44]],'외로움':['사람과 이어지고 싶은 마음',[34,42,22]],'절망':['그만큼 오래 버텨 왔다는 뜻',[34,22,5]],'슬픔':['그만큼 소중했다는 뜻',[34,22,5]],'죄책감':['책임감',[4,8,21]],'무가치감':['잘 살고 싶은 마음',[21,14,12]],'좌절':['목표에 진지하다는 뜻',[10,35,6]],'열등감':['더 나아지고 싶은 마음',[4,13,14]]};
 const LG_CTX=[[/(미루|미뤄|시작을 못|손을 못|귀찮|해야 하는데)/,[35,29],'미루기'],[/(야식|술|폰|유튜브|담배|게임|쇼핑|과식|릴스|숏폼)/,[30,31,29],'습관·유혹'],[/(친구|여자친구|남자친구|애인|부모|엄마|아빠|사장|팀장|동료|학생|학부모|가족|걔|쟤)/,[26,48,49],'관계'],[/(발표|면접|시험|수업|사람들 앞|모임)/,[27,36,20],'평가 불안']];
 function jo(w,a,b){const c=w.charCodeAt(w.length-1);return w+((c>=0xAC00&&c<=0xD7A3&&(c-0xAC00)%28)?a:b);}
 const LG_LAB={'바보':'바보','한심':'한심한 사람','쓰레기':'쓰레기','패배자':'패배자','루저':'루저','멍청':'멍청한 사람','무능':'무능한 사람','쓸모없':'쓸모없는 사람','실패자':'실패자','찐따':'찐따','병신':'병신','자격이 없':'자격 없는 사람'};
@@ -1154,13 +1159,14 @@ const r=Object.keys(c).map(Number).sort((a,b)=>c[b]-c[a]).slice(0,6);return r.le
 function techCard(){if(!S.tech)return '';const t=byN(S.tech);return `<div class="card"><div class="eyebrow">${t.n}번 · ${CATS[t.c]}</div><p style="margin:0;font-size:14px;color:var(--muted)">${esc(t.d)}</p>${guideHTML(t,false)}
 ${techQ().map((x,i)=>`<div class="field"><label for="wa${i}">${esc(x)}</label><textarea id="wa${i}">${esc(S.ans[i]||'')}</textarea></div>`).join('')}</div>`;}
 function techQ(){const t=byN(S.tech);if(S.tech===19)return[`부정적인 목소리: "${toYou(S.thought)}" — "나는~"으로 방어해 보세요.`,'완승했나요? 아니라면 수용 역설로 한 번 더: "맞아, ~. 그래도 ~."'];return t.q;}
-const emoRs=()=>Object.keys(S.emo).map((k,i)=>rng('we'+i,S.emo[k],k+' (%)')).join('');
+const emoRs=()=>Object.keys(S.emo).map((k,i)=>rng('we'+i,S.emo[k],esc(k)+(EMO_SUB[k]?` <span class="hint">${EMO_SUB[k]}</span>`:'')+' (%)')).join('');
 const q=(t,h)=>`<div class="q">${t}</div>${h?`<p class="sub" style="margin:0">${h}</p>`:''}`;
 function draw(){const s=S.step;const ek=Object.keys(S.emo);
 $('sheetIn').querySelector('h2').textContent=STEPS[s];$('sheetIn').querySelector('.eyebrow').textContent=`생각 하나 풀어보기 · ${s+1}/${STEPS.length}`;
 let h=`<div class="dots">${STEPS.map((_,i)=>`<i class="${i<=s?'on':''}"></i>`).join('')}</div>`;
 if(s===0)h+=`${q('지금 무엇 때문에 마음이 불편한가요?','한두 문장이면 충분합니다. 사실만 적어 보세요.')}<textarea id="ws" style="min-height:110px" placeholder="예: 수업 준비를 못 해서 학생 앞에서 버벅였다">${esc(S.sit)}</textarea>`;
-if(s===1)h+=`${q('어떤 감정이 드나요?','해당하는 것을 모두 고르고, 강도를 매겨 보세요.')}<div class="chips">${EMO.map(e=>`<button class="chip${e in S.emo?' on':''}" data-emo="${e}">${e}</button>`).join('')}</div><div id="emoRs" class="block">${emoRs()}</div>`;
+if(s===1)h+=`${q('어떤 감정이 드나요?','해당하는 감정군을 모두 고르고, 강도를 매겨 보세요. 목록에 없으면 기타에 직접 적으세요.')}<div class="emog" id="emoChips">${EMO_G.map(([e,sub])=>`<button class="eg${e in S.emo?' on':''}" data-emo="${e}"><b>${e}</b><span>${sub}</span></button>`).join('')}${Object.keys(S.emo).filter(k=>!EMO.includes(k)).map(k=>`<button class="eg on" data-emo="${esc(k)}"><b>${esc(k)}</b><span>기타</span></button>`).join('')}</div>
+<div class="addrow"><input type="text" id="emoNew" placeholder="기타 감정 직접 적기 (예: 질투, 허탈함)"><button class="btn sm" data-emoadd>추가</button></div><div id="emoRs" class="block">${emoRs()}</div>`;
 if(s===2)h+=`${q('그 순간 머릿속에 스친 생각은?','머릿속 말 그대로, "나는 ~" 형태로 적어 보세요.')}<textarea id="wt" style="min-height:90px" placeholder="예: 나는 선생 자격이 없어">${esc(S.thought)}</textarea>${rng('wb0',S.b0,'이 생각을 지금 얼마나 믿나요? (%)')}`;
 if(s===3)h+=`${q('1번 긍정적 재구성','이 감정을 없애기 전에, 이 감정이 지켜주는 것부터 봅니다.')}
 <div class="field"><label for="wr1">이 생각이나 감정이 나에게 주는 이점은?</label><textarea id="wr1" placeholder="예: 다음 수업은 더 철저히 준비하게 만든다">${esc(S.r1)}</textarea></div>
@@ -1205,6 +1211,7 @@ if(e.target.closest('[data-aiopen]')){window.open('https://claude.ai/new','_blan
 if(e.target.closest('[data-aiask]')){const q=val('aiQ').trim();if(!q){G.toast('질문을 적어 주세요');return;}aiAsk(q);return;}
 {const x=e.target.closest('[data-aidist]');if(x){read();x.dataset.aidist.split(',').forEach(k=>{if(!S.dist.includes(k))S.dist.push(k);});G.toast('왜곡을 체크했어요');if(S.step===4)draw();return;}}
 {const x=e.target.closest('[data-aitech]');if(x){read();const n=+x.dataset.aitech;if(S.tech!==n){S.tech=n;S.ans=[];}if(!S.thought.trim()){G.toast('먼저 3단계에서 생각을 적어 주세요');return;}S.step=5;draw();return;}}
+if(e.target.closest('[data-emoadd]')){const v=val('emoNew').trim().slice(0,12);if(!v){G.toast('감정을 적어 주세요');return;}read();if(!(v in S.emo))S.emo[v]=60;draw();return;}
 let b=e.target.closest('[data-emo]');if(b){read();const k=b.dataset.emo;if(k in S.emo)delete S.emo[k];else S.emo[k]=60;b.classList.toggle('on',k in S.emo);const y=$('sheet').scrollTop;$('emoRs').innerHTML=emoRs();$('sheet').scrollTop=y;return;}
 b=e.target.closest('[data-dist]');if(b){const k=b.dataset.dist;S.dist=S.dist.includes(k)?S.dist.filter(x=>x!==k):S.dist.concat(k);b.classList.toggle('on');return;}
 b=e.target.closest('[data-wt]');if(b){read();const n=+b.dataset.wt;if(S.tech!==n){S.tech=n;S.ans=[];}$('sheetIn').querySelectorAll('[data-wt]').forEach(c=>c.classList.toggle('on',+c.dataset.wt===n));const y=$('sheet').scrollTop;$('wtCard').innerHTML=techCard();$('sheet').scrollTop=y;return;}
