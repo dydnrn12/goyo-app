@@ -262,6 +262,8 @@ select{font:inherit;color:var(--ink);background:var(--surface);border:1px solid 
 .ailist{margin:0;padding-left:18px;display:flex;flex-direction:column;gap:4px}
 .aitech{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center;background:var(--bg);border-radius:12px;padding:10px 12px}
 .aitech .sub{font-size:13px;color:var(--muted)}
+.aibtns{display:flex;flex-direction:column;gap:8px}
+.aibtns .btn{width:100%}
 .sheet{overscroll-behavior:contain}.sheet,.sheet *{overflow-anchor:none}
 @media (prefers-reduced-motion: reduce){
 .orb{transition:none!important}
@@ -1017,7 +1019,7 @@ function aiCardHTML(){const on=!!AI.key;return `<details class="card"${on?'':' o
 <div class="field"><label for="aiKey">Anthropic API 키</label><input type="password" id="aiKey" autocomplete="off" placeholder="${on?'저장됨 · 바꾸려면 새로 입력':'sk-ant-...'}"></div>
 <div class="field"><label for="aiModel">모델</label><select id="aiModel">${AI_MODELS.map(m=>`<option value="${m[0]}"${AI.model===m[0]?' selected':''}>${m[1]}</option>`).join('')}</select></div>
 <div class="controls" style="justify-content:flex-start"><button class="btn sm primary" data-aisave>저장</button>${on?'<button class="btn sm" data-aidel>키 삭제</button>':''}</div>
-<p class="hint" style="margin:0">키는 이 폰에만 저장되고 GitHub 코드에는 들어가지 않습니다. AI 가이드를 누를 때만 일지 내용이 Anthropic으로 전송되며, 사용량만큼 요금이 부과됩니다. 키는 console.anthropic.com에서 만들 수 있어요.</p></details>`;}
+<p class="hint" style="margin:0">키는 이 폰에만 저장되고 GitHub 코드에는 들어가지 않습니다. AI 가이드를 누를 때만 일지 내용이 Anthropic으로 전송되며, 사용량만큼 요금이 부과됩니다. 키는 console.anthropic.com에서 만들 수 있어요. 키 없이도 일지 화면의 <b>Claude 앱에서 물어보기</b>로 구독을 써서 물어볼 수 있습니다.</p></details>`;}
 function wizard(){
 const S={step:0,sit:'',emo:{},thought:'',b0:80,r1:'',r2:'',tgt:{},dist:[],tech:null,ans:[],pos:'',posB:80,b1:null,now:{},ai:{turns:[],last:null,loading:false,err:''}};
 let lastStep=-1;
@@ -1037,8 +1039,31 @@ const msgs=S.ai.turns.concat([{role:'user',content}]);S.ai.loading=true;S.ai.err
 try{const txt=await aiCall(msgs);S.ai.turns=msgs.concat([{role:'assistant',content:txt}]);S.ai.last=aiParse(txt);}
 catch(e){S.ai.err=e.message==='NOKEY'?'NOKEY':e.message;}
 S.ai.loading=false;draw();}
+function chatPrompt(){read();return `나는 "고요와 근력"이라는 앱으로 데이비드 번스식 인지행동치료(CBT) 기분 일지를 쓰고 있어. 아래 일지를 보고 코치처럼 도와줘.
+
+원하는 것:
+1. 내 감정을 짧게 알아주고, 그 감정이 보여주는 나의 좋은 가치 하나
+2. 생각 속 인지 왜곡과, 그렇게 본 근거가 된 표현
+3. 아래 기법 목록에서 이 상황에 맞는 기법 2~3개(번호로)와 지금 할 첫 단계
+4. 스스로에게 던질 질문 2~3개
+5. 새 생각을 쓸 때의 힌트 (새 생각을 대신 완성하지는 말아 줘)
+6. 지난 기록에서 반복되는 패턴이 보이면 한 줄로
+한국어로, 따뜻하지만 짧게. 진단하지 말고, 자해나 극단적 절망의 신호가 보이면 기법보다 내 안전을 먼저 물어봐 줘.
+
+${wState()}
+
+앱에 쌓인 최근 기록:
+${aiHistory()}
+
+기법 목록:
+${T.map(t=>t.n+'. '+t.t).join(', ')}`;}
+async function toClaude(){const txt=chatPrompt();let ok=false;
+try{await navigator.clipboard.writeText(txt);ok=true;}catch(e){}
+if(ok){G.toast('복사했어요. Claude 앱에 붙여 넣으세요');window.open('https://claude.ai/new','_blank');}
+else{S.ai.copy=txt;draw();}}
 function aiPanel(){const A=S.ai;
-if(A.err==='NOKEY')return `<div class="aibox"><b>✦ AI 가이드</b><p class="sub" style="margin:0">API 키가 아직 없어요. 마음 탭의 "AI 가이드" 카드에서 키를 저장한 뒤 다시 눌러 주세요.</p></div>`;
+if(A.copy)return `<div class="aibox"><b>이 내용을 복사해서 Claude 앱에 붙여 넣으세요</b><textarea id="aiCopy" style="min-height:140px" readonly>${esc(A.copy)}</textarea><div class="controls" style="justify-content:flex-start"><button class="btn sm primary" data-aicopysel>전체 선택</button><button class="btn sm" data-aiopen>Claude 열기</button></div></div>`;
+if(A.err==='NOKEY')return `<div class="aibox"><b>✦ AI 가이드</b><p class="sub" style="margin:0">앱 안에서 바로 받으려면 API 키가 필요해요(마음 탭의 "AI 가이드" 카드). 키 없이 구독으로 쓰려면 아래 <b>Claude 앱에서 물어보기</b>를 누르세요.</p></div>`;
 if(A.loading)return `<div class="aibox"><b>✦ AI가 읽고 있어요…</b><p class="sub" style="margin:0">적은 내용과 지난 기록을 함께 보고 있습니다.</p></div>`;
 if(A.err)return `<div class="aibox warn"><b>AI 호출 실패</b><p class="sub" style="margin:0">${esc(A.err)}</p></div>`;
 const r=A.last;if(!r)return '';
@@ -1096,7 +1121,7 @@ ${ek.map(k=>`<div class="row"><span>${k}</span><div class="bars"><i class="b0" s
 <div class="pill"><i style="background:var(--ochre)"></i>처음 <i style="background:var(--moss)"></i>지금</div>
 <div class="bubble me"><small>새 생각 · 믿음 ${S.posB}%</small>${esc(S.pos)}</div>`;}
 h+=aiPanel();
-if(s<7)h+=`<button class="btn ai" id="wai"${S.ai.loading?' disabled':''}>✦ AI 가이드${S.ai.last?' 다시 받기':' 받기'}</button>`;
+h+=`<div class="aibtns">${s<7&&AI.key?`<button class="btn ai" id="wai"${S.ai.loading?' disabled':''}>✦ AI 가이드${S.ai.last?' 다시 받기':' 받기'}</button>`:''}${s<7&&!AI.key?`<button class="btn ai" id="wai">✦ AI 가이드 받기</button>`:''}<button class="btn" id="wclaude">Claude 앱에서 물어보기 (구독)</button></div>`;
 h+=`<div class="finish">${s===7?`<button class="btn primary" id="wsave">저장하고 닫기</button><button class="btn" id="wmore">다른 기법 더 해보기</button>`:`<button class="btn primary" id="wnext">${s===6?'결과 보기':'다음'}</button>${s?'<button class="btn" id="wprev">이전</button>':''}`}</div>`;
 body(h,s!==lastStep);lastStep=s;
 if($('wnext'))$('wnext').onclick=next;if($('wprev'))$('wprev').onclick=()=>{read();S.step--;draw();};
@@ -1111,6 +1136,9 @@ if(s===2&&!S.thought.trim()){G.toast('생각을 적어 주세요');return;}
 if(s===6&&!S.pos.trim()){G.toast('새 생각을 적어 주세요');return;}
 S.step++;draw();}
 $('sheetIn').onclick=e=>{if(e.target.id==='wai'){aiAsk();return;}
+if(e.target.id==='wclaude'){toClaude();return;}
+if(e.target.closest('[data-aicopysel]')){const t=$('aiCopy');t.focus();t.select();try{document.execCommand('copy');G.toast('복사했어요');}catch(err){}return;}
+if(e.target.closest('[data-aiopen]')){window.open('https://claude.ai/new','_blank');return;}
 if(e.target.closest('[data-aiask]')){const q=val('aiQ').trim();if(!q){G.toast('질문을 적어 주세요');return;}aiAsk(q);return;}
 {const x=e.target.closest('[data-aidist]');if(x){read();x.dataset.aidist.split(',').forEach(k=>{if(!S.dist.includes(k))S.dist.push(k);});G.toast('왜곡을 체크했어요');if(S.step===4)draw();return;}}
 {const x=e.target.closest('[data-aitech]');if(x){read();const n=+x.dataset.aitech;if(S.tech!==n){S.tech=n;S.ans=[];}if(!S.thought.trim()){G.toast('먼저 3단계에서 생각을 적어 주세요');return;}S.step=5;draw();return;}}
