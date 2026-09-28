@@ -1029,7 +1029,7 @@ function aiCardHTML(){const on=!!AI.key;return `<details class="card"${on?'':' o
 function wizard(){
 const S={step:0,sit:'',emo:{},thought:'',b0:80,r1:'',r2:'',tgt:{},dist:[],tech:null,ans:[],pos:'',posB:80,b1:null,now:{},ai:{turns:[],last:null,loading:false,err:''}};
 let lastStep=-1;
-const STEPN=['상황','감정','생각','긍정적 재구성','왜곡 찾기','기법 적용','새로운 생각','결과'];
+const STEPN=['상황','감정','생각','긍정적 재구성','왜곡 찾기','새 생각 (직설 기법)','결과'];
 function wState(){const ek=Object.keys(S.emo);return `현재 기분 일지 (지금 단계: ${STEPN[S.step]})
 상황: ${S.sit||'-'}
 감정: ${ek.length?ek.map(k=>`${k} ${S.emo[k]}%`+(S.tgt[k]!=null?`(목표 ${S.tgt[k]}%)`:'')).join(', '):'-'}
@@ -1146,15 +1146,16 @@ ${ts.length?`<div class="lbl">추천 기법</div>${ts.map(t=>`<div class="aitech
 ${(r.questions||[]).length?`<div class="lbl">스스로에게 물어보기</div><ul class="ailist">${r.questions.map(q=>`<li>${esc(q)}</li>`).join('')}</ul>`:''}
 ${(r.reframe_hints||[]).length?`<div class="lbl">새 생각을 쓸 때</div><ul class="ailist">${r.reframe_hints.map(q=>`<li>${esc(q)}</li>`).join('')}</ul>`:''}
 ${r.local?'<p class="hint" style="margin:0">적은 문장의 표현과 지난 기록을 규칙으로 분석한 추천이에요. 참고만 하고 판단은 직접 하세요.</p>':'<div class="addrow"><input type="text" id="aiQ" placeholder="AI에게 더 물어보기"><button class="btn sm" data-aiask>보내기</button></div>\n<p class="hint" style="margin:0">AI의 답은 참고용입니다. 판단은 직접 하세요.</p>'}</details>`;}
-const STEPS=['상황','감정','생각','긍정적 재구성','왜곡 찾기','기법 적용','새로운 생각','결과'];
+const STEPS=['상황','감정','생각','긍정적 재구성','왜곡 찾기','새 생각 (직설 기법)','결과'];
 sheet('생각 하나 풀어보기','','','');
 function read(){const s=S.step;
 if(s===0)S.sit=val('ws');
 if(s===1)Object.keys(S.emo).forEach((k,i)=>{S.emo[k]=+val('we'+i);});
 if(s===2){S.thought=val('wt');S.b0=+val('wb0');}
 if(s===3){S.r1=val('wr1');S.r2=val('wr2');Object.keys(S.emo).forEach((k,i)=>{S.tgt[k]=+val('wg'+i);});}
-if(s===5&&S.tech)S.ans=techQ().map((_,i)=>val('wa'+i));
-if(s===6){S.pos=val('wp');S.posB=+val('wpb');S.b1=+val('wb1');Object.keys(S.emo).forEach((k,i)=>{S.now[k]=+val('wn'+i);});}}
+if(s===5&&S.tech&&$('wa0'))S.ans=techQ().map((_,i)=>val('wa'+i));
+if(s===5&&$('techBox'))S.techOpen=$('techBox').open;
+if(s===5){S.pos=val('wp');S.posB=+val('wpb');S.b1=+val('wb1');Object.keys(S.emo).forEach((k,i)=>{S.now[k]=+val('wn'+i);});}}
 function recs(){const c={};(S.ai.last&&S.ai.last.techniques||[]).forEach((t,i)=>{if(byN(+t.n))c[+t.n]=(c[+t.n]||0)+100-i;});S.dist.forEach(d=>(MAP[d]||[]).forEach((n,i)=>{c[n]=(c[n]||0)+(10-i);}));
 const r=Object.keys(c).map(Number).sort((a,b)=>c[b]-c[a]).slice(0,6);return r.length?r:[3,4,5,19,21,10];}
 function techCard(){if(!S.tech)return '';const t=byN(S.tech);return `<div class="card"><div class="eyebrow">${t.n}번 · ${CATS[t.c]}</div><p style="margin:0;font-size:14px;color:var(--muted)">${esc(t.d)}</p>${guideHTML(t,false)}
@@ -1174,27 +1175,29 @@ if(s===3)h+=`${q('1번 긍정적 재구성','이 감정을 없애기 전에, 이
 <div class="field"><label for="wr2">이 감정은 나의 어떤 좋은 가치를 보여주나요?</label><textarea id="wr2">${esc(S.r2)}</textarea></div>
 <div class="chips">${VALUES.map(v=>`<button class="chip" data-val="${v}">+ ${v}</button>`).join('')}</div>
 ${ek.length?`${q('2번 마법 다이얼','좋은 점은 남기고, 어디까지 낮추면 충분할까요?')}${ek.map((k,i)=>rng('wg'+i,S.tgt[k]!=null?S.tgt[k]:Math.round(S.emo[k]/2/5)*5,`${k}: 지금 ${S.emo[k]} → 목표`)).join('')}`:''}`;
-if(s===4)h+=`<div class="bubble"><small>나의 생각</small>${esc(S.thought)}</div>${q('이 생각에 어떤 왜곡이 들어 있나요?','해당하는 것을 모두 누르세요. 보통 여러 개가 겹칩니다.')}
+if(s===4)h+=`<div class="bubble"><small>나의 생각</small>${esc(S.thought)}</div>${q('이 생각에 어떤 왜곡이 들어 있나요?','해당하는 것을 가볍게 체크하세요. 잘 모르겠으면 건너뛰어도 됩니다.')}
 <div class="dlist">${DIST.map(d=>`<button class="dist${S.dist.includes(d[0])?' on':''}" data-dist="${d[0]}"><b>${d[1]}</b><span>${d[2]}</span></button>`).join('')}</div>`;
-if(s===5){const r=recs();h+=`${q('어떤 기법으로 반박해 볼까요?',S.dist.length?'고른 왜곡에 잘 듣는 순서로 추천합니다.':'왜곡을 고르지 않아 기본 추천을 보여줍니다.')}
-<div class="chips">${r.map(n=>`<button class="chip${S.tech===n?' on':''}" data-wt="${n}">${byN(n).t}</button>`).join('')}</div><div id="wtCard">${techCard()}</div>`;}
-if(s===6)h+=`<div class="bubble"><small>처음 생각 · 믿음 ${S.b0}%</small>${esc(S.thought)}</div>
+if(s===5){const r=recs();h+=`<div class="bubble"><small>처음 생각 · 믿음 ${S.b0}%</small>${esc(S.thought)}</div>
+<div class="card"><div class="eyebrow">3번 · 직설 기법</div><p style="margin:0;font-size:14px">새 생각을 쓰기 전에 스스로에게 이렇게 물어보세요.</p><ul class="ailist"><li>이 부정적인 생각은 정말 사실인가?</li><li>그 생각을 진심으로 믿는가?</li><li>상황을 달리 볼 수 있는 관점이 있는가?</li></ul>${S.dist.length?`<p class="sub" style="margin:0">체크한 왜곡: ${S.dist.map(d=>DN[d]).join(', ')}. 새 생각은 이 왜곡을 피해서 써 보세요.</p>`:''}</div>
 ${q('더 현실적인 새 생각','100% 사실이면서, 처음 생각을 약하게 만드는 문장이어야 효과가 있습니다.')}
 <textarea id="wp" style="min-height:90px" placeholder="예: 오늘 준비가 부족했던 건 맞아. 그래도 8년 동안 학생들을 가르쳐 왔고, 다음 수업은 준비할 수 있어.">${esc(S.pos)}</textarea>
 ${rng('wpb',S.posB,'이 새 생각을 얼마나 믿나요? (%)')}${rng('wb1',S.b1!=null?S.b1:S.b0,'처음 생각은 이제 몇 % 믿나요?')}
-${ek.length?`<div class="lbl">감정은 지금 몇 %인가요?</div>${ek.map((k,i)=>rng('wn'+i,S.now[k]!=null?S.now[k]:S.emo[k],`${k} (처음 ${S.emo[k]} · 목표 ${S.tgt[k]!=null?S.tgt[k]:'-'})`)).join('')}`:''}`;
-if(s===7){const drop=S.b0-S.b1;const ok=S.posB>=80&&drop>=30;
+${ek.length?`<div class="lbl">감정은 지금 몇 %인가요?</div>${ek.map((k,i)=>rng('wn'+i,S.now[k]!=null?S.now[k]:S.emo[k],`${k} (처음 ${S.emo[k]} · 목표 ${S.tgt[k]!=null?S.tgt[k]:'-'})`)).join('')}`:''}
+<details class="card" id="techBox"${S.techOpen?' open':''}><summary class="q" style="cursor:pointer">막히면 다른 기법 쓰기 <span class="hint">처음 생각이 잘 안 줄어들 때</span></summary>
+<p class="sub" style="margin:0">${S.dist.length?'체크한 왜곡에 잘 듣는 순서로 추천합니다.':'왜곡을 체크하지 않아 기본 추천을 보여줍니다.'} 기법을 해본 뒤 위의 새 생각과 믿음 %를 다시 고쳐 보세요.</p>
+<div class="chips">${r.map(n=>`<button class="chip${S.tech===n?' on':''}" data-wt="${n}">${byN(n).t}</button>`).join('')}</div><div id="wtCard">${techCard()}</div></details>`;}
+if(s===6){const drop=S.b0-S.b1;const ok=S.posB>=80&&drop>=30;
 h+=`<div class="verdict${ok?'':' warn'}">${ok?`처음 생각에 대한 믿음이 <b>${S.b0}% → ${S.b1}%</b>로 줄었습니다. 생각이 풀렸어요.`:S.posB<80?`새 생각을 ${S.posB}%만 믿고 있어요. 새 생각이 100% 사실처럼 느껴질 때까지 다른 기법을 하나 더 써 보세요.`:`처음 생각이 아직 ${S.b1}% 남아 있어요. 다른 기법으로 한 번 더 반박해 보면 더 내려갑니다.`}</div>
 <div class="cmp"><div class="row"><span>처음 생각</span><div class="bars"><i class="b0" style="width:${Math.max(2,S.b0)}%"></i><i class="b1" style="width:${Math.max(2,S.b1)}%"></i></div></div>
 ${ek.map(k=>`<div class="row"><span>${k}</span><div class="bars"><i class="b0" style="width:${Math.max(2,S.emo[k])}%"></i><i class="b1" style="width:${Math.max(2,S.now[k])}%"></i></div></div>`).join('')}</div>
 <div class="pill"><i style="background:var(--ochre)"></i>처음 <i style="background:var(--moss)"></i>지금</div>
 <div class="bubble me"><small>새 생각 · 믿음 ${S.posB}%</small>${esc(S.pos)}</div>`;}
 h+=aiPanel();
-h+=`<div class="aibtns">${s<7?`<button class="btn ai" id="wlocal">✦ 자동 가이드 받기 (무료)</button>`:''}${s<7&&AI.key?`<button class="btn ai" id="wai"${S.ai.loading?' disabled':''}>✦ AI 가이드${S.ai.last&&!S.ai.last.local?' 다시 받기':' 받기'}</button>`:''}<button class="btn" id="wclaude">Claude 앱에서 물어보기 (구독)</button></div>`;
-h+=`<div class="finish">${s===7?`<button class="btn primary" id="wsave">저장하고 닫기</button><button class="btn" id="wmore">다른 기법 더 해보기</button>`:`<button class="btn primary" id="wnext">${s===6?'결과 보기':'다음'}</button>${s?'<button class="btn" id="wprev">이전</button>':''}`}</div>`;
+h+=`<div class="aibtns">${s<6?`<button class="btn ai" id="wlocal">✦ 자동 가이드 받기 (무료)</button>`:''}${s<6&&AI.key?`<button class="btn ai" id="wai"${S.ai.loading?' disabled':''}>✦ AI 가이드${S.ai.last&&!S.ai.last.local?' 다시 받기':' 받기'}</button>`:''}<button class="btn" id="wclaude">Claude 앱에서 물어보기 (구독)</button></div>`;
+h+=`<div class="finish">${s===6?`<button class="btn primary" id="wsave">저장하고 닫기</button><button class="btn" id="wmore">다른 기법 더 해보기</button>`:`<button class="btn primary" id="wnext">${s===5?'결과 보기':'다음'}</button>${s?'<button class="btn" id="wprev">이전</button>':''}`}</div>`;
 body(h,s!==lastStep);lastStep=s;
 if($('wnext'))$('wnext').onclick=next;if($('wprev'))$('wprev').onclick=()=>{read();S.step--;draw();};
-if($('wmore'))$('wmore').onclick=()=>{S.step=5;S.tech=null;S.ans=[];draw();};
+if($('wmore'))$('wmore').onclick=()=>{S.step=5;S.techOpen=true;draw();};
 if($('wsave'))$('wsave').onclick=()=>{const t=S.tech?byN(S.tech):null;
 M.entries.unshift({id:uid(),ts:Date.now(),sit:S.sit,thought:S.thought,b0:S.b0,b1:S.b1,pos:S.pos,posB:S.posB,dist:S.dist,
 emo:Object.fromEntries(Object.keys(S.emo).map(k=>[k,[S.emo[k],S.tgt[k]!=null?S.tgt[k]:null,S.now[k]]])),reframe:[S.r1,S.r2],tech:S.tech,techAns:t?techQ().map((x,i)=>[x,S.ans[i]||'']).filter(x=>x[1]):[]});
@@ -1202,7 +1205,7 @@ save();renderMind();G.close();G.toast('생각 일지에 저장했습니다');};}
 function next(){read();const s=S.step;
 if(s===1&&!Object.keys(S.emo).length){G.toast('감정을 하나 이상 골라 주세요');return;}
 if(s===2&&!S.thought.trim()){G.toast('생각을 적어 주세요');return;}
-if(s===6&&!S.pos.trim()){G.toast('새 생각을 적어 주세요');return;}
+if(s===5&&!S.pos.trim()){G.toast('새 생각을 적어 주세요');return;}
 S.step++;draw();}
 $('sheetIn').onclick=e=>{if(e.target.id==='wai'){aiAsk();return;}
 if(e.target.id==='wlocal'){const g=localGuide();if(!g){G.toast('상황이나 생각을 먼저 조금 적어 주세요');return;}S.ai.last=g;S.ai.err='';S.ai.copy='';draw();setTimeout(()=>{const b=$('sheetIn').querySelector('.aibox');if(b)b.scrollIntoView({behavior:'smooth',block:'start'});},50);return;}
@@ -1211,7 +1214,7 @@ if(e.target.closest('[data-aicopysel]')){const t=$('aiCopy');t.focus();t.select(
 if(e.target.closest('[data-aiopen]')){window.open('https://claude.ai/new','_blank');return;}
 if(e.target.closest('[data-aiask]')){const q=val('aiQ').trim();if(!q){G.toast('질문을 적어 주세요');return;}aiAsk(q);return;}
 {const x=e.target.closest('[data-aidist]');if(x){read();x.dataset.aidist.split(',').forEach(k=>{if(!S.dist.includes(k))S.dist.push(k);});G.toast('왜곡을 체크했어요');if(S.step===4)draw();return;}}
-{const x=e.target.closest('[data-aitech]');if(x){read();const n=+x.dataset.aitech;if(S.tech!==n){S.tech=n;S.ans=[];}if(!S.thought.trim()){G.toast('먼저 3단계에서 생각을 적어 주세요');return;}S.step=5;draw();return;}}
+{const x=e.target.closest('[data-aitech]');if(x){read();const n=+x.dataset.aitech;if(S.tech!==n){S.tech=n;S.ans=[];}if(!S.thought.trim()){G.toast('먼저 3단계에서 생각을 적어 주세요');return;}S.step=5;S.techOpen=true;draw();return;}}
 if(e.target.closest('[data-emoadd]')){const v=val('emoNew').trim().slice(0,12);if(!v){G.toast('감정을 적어 주세요');return;}read();if(!(v in S.emo))S.emo[v]=60;draw();return;}
 let b=e.target.closest('[data-emo]');if(b){read();const k=b.dataset.emo;if(k in S.emo)delete S.emo[k];else S.emo[k]=60;b.classList.toggle('on',k in S.emo);const y=$('sheet').scrollTop;$('emoRs').innerHTML=emoRs();$('sheet').scrollTop=y;return;}
 b=e.target.closest('[data-dist]');if(b){const k=b.dataset.dist;S.dist=S.dist.includes(k)?S.dist.filter(x=>x!==k):S.dist.concat(k);b.classList.toggle('on');return;}
