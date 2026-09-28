@@ -252,6 +252,16 @@ input[type=range]{width:100%;accent-color:var(--moss)}
 .soc summary{cursor:pointer;font-size:14px;color:var(--moss)}
 .soc summary b{color:var(--ink)}
 .soc[open]{gap:10px}
+select{font:inherit;color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:10px 12px;width:100%}
+.btn.ai{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.btn.ai:disabled{opacity:.5}
+.aibox{background:var(--surface);border:1px solid var(--moss);border-radius:16px;padding:14px 16px;display:flex;flex-direction:column;gap:10px;font-size:14px}
+.aibox.warn{border-color:var(--ochre)}
+.aibox summary{cursor:pointer;color:var(--moss);list-style:none}
+.aibox[open]>summary{margin-bottom:2px}
+.ailist{margin:0;padding-left:18px;display:flex;flex-direction:column;gap:4px}
+.aitech{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center;background:var(--bg);border-radius:12px;padding:10px 12px}
+.aitech .sub{font-size:13px;color:var(--muted)}
 .sheet{overscroll-behavior:contain}.sheet,.sheet *{overflow-anchor:none}
 @media (prefers-reduced-motion: reduce){
 .orb{transition:none!important}
@@ -970,9 +980,79 @@ b=e.target.closest('[data-psave]');if(b){const x=M.preds.find(z=>z.id===b.datase
 draw();}
 
 /* ---------- wizard: 생각 하나 풀어보기 ---------- */
+/* ---------- AI 가이드 (사용자 본인 API 키, 이 기기에만 저장) ---------- */
+const AIK='goyo-ai';let AI={key:'',model:'claude-sonnet-5'};
+try{AI=Object.assign(AI,JSON.parse(localStorage.getItem(AIK)||'{}'));}catch(e){}
+function aiSave(){try{localStorage.setItem(AIK,JSON.stringify(AI));}catch(e){}}
+const AI_MODELS=[['claude-sonnet-5','Sonnet 5 · 빠르고 저렴'],['claude-opus-5-5','Opus 5.5 · 더 깊이']];
+const AI_SYS=`너는 "고요와 근력" 앱 안의 인지행동치료(CBT) 코치다. 사용자는 데이비드 번스의 TEAM-CBT 기법 50가지를 담은 앱으로 기분 일지를 쓰고 있다.
+원칙:
+- 한국어로, 따뜻하지만 군더더기 없이 쓴다. 판단하거나 훈계하지 않는다. 진단하지 않는다.
+- 먼저 사용자의 감정을 짧게 알아주고, 그 감정이 보여주는 좋은 가치(긍정적 재구성)를 한 가지 짚는다.
+- 생각 속 인지 왜곡을 구체적인 표현을 근거로 짚는다. 왜곡 키는 aon(전부 아니면 전부), og(지나친 일반화), mf(정신적 여과), dp(긍정적인 면 무시), mr(독심술), fp(예언자적 말하기), mag(극대화·극소화), er(감정적 추리), sh(해야 한다는 생각), lab(낙인찍기), sb(자기 비난), ob(타인 비난)만 쓴다.
+- 기법은 아래 목록의 번호로만 추천하고 2~3개로 줄인다. 각 기법마다 이 상황에 맞춘 첫 단계를 한 문장으로 준다.
+- 새 생각을 대신 완성해 주지 말고, 사용자가 스스로 쓰도록 질문과 힌트를 준다.
+- 앱에 쌓인 과거 기록에서 반복되는 패턴이 보이면 한 문장으로 알려 준다.
+- 자해·자살 생각, 극단적 절망, 타인을 해칠 위험이 조금이라도 보이면 safety를 true로 하고, reply에서 지금 안전한지 부드럽게 묻고 자살예방상담전화 109(24시간), 정신건강위기상담 1577-0199 연결을 권한다. 이 경우 기법 추천은 최소화한다.
+출력은 설명 없이 아래 JSON 하나만:
+{"reply":"공감과 핵심 가이드 2~4문장","pattern":"과거 기록에서 보이는 패턴(없으면 빈 문자열)","distortions":[{"key":"lab","why":"근거가 된 표현"}],"techniques":[{"n":12,"why":"이 상황에 맞는 이유","first_step":"지금 바로 할 첫 단계"}],"questions":["스스로에게 던질 질문"],"reframe_hints":["새 생각을 쓸 때 참고할 힌트"],"safety":false}`;
+function aiCatalog(){return T.map(t=>`${t.n}. ${t.t}: ${t.d}`).join('\n');}
+function aiHistory(){const L=[];
+M.entries.slice(0,6).forEach(e=>L.push(`- ${md(e.ts)} 생각 "${e.thought}" 믿음 ${e.b0}→${e.b1}, 왜곡 ${(e.dist||[]).map(d=>DN[d]).join('/')||'-'}, 기법 ${e.tech?byN(e.tech).t:'-'}, 새 생각 "${e.pos}"`));
+M.notes.slice(0,6).forEach(n=>L.push(`- ${md(n.ts)} ${n.title}: ${(n.pairs[0]||['',''])[1]}`.slice(0,160)));
+const days=[];for(let i=6;i>=0;i--){days.push(M.counts[G.ymd(G.addDays(new Date(),-i))]||0);}
+L.push(`- 최근 7일 부정적 생각 알아차림 횟수: ${days.join(', ')}`);
+const pd=M.preds.filter(x=>x.a!=null).slice(0,5);if(pd.length)L.push('- 예측 vs 실제: '+pd.map(x=>`${x.name} ${x.p}→${x.a}`).join('; '));
+return L.join('\n');}
+async function aiCall(messages){
+if(!AI.key)throw new Error('NOKEY');
+const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'content-type':'application/json','x-api-key':AI.key,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
+body:JSON.stringify({model:AI.model,max_tokens:1600,system:AI_SYS+'\n\n기법 목록:\n'+aiCatalog(),messages})});
+let j={};try{j=await r.json();}catch(e){}
+if(!r.ok)throw new Error((j.error&&j.error.message)||('HTTP '+r.status));
+return (j.content||[]).filter(c=>c.type==='text').map(c=>c.text).join('');}
+function aiParse(t){const a=t.indexOf('{'),b=t.lastIndexOf('}');try{return JSON.parse(t.slice(a,b+1));}catch(e){return {reply:t};}}
+function aiCardHTML(){const on=!!AI.key;return `<details class="card"${on?'':' open'}><summary class="sec-h" style="cursor:pointer;list-style:none"><h3>✦ AI 가이드</h3><span>${on?'연결됨':'설정 필요'}</span></summary>
+<p class="sub" style="margin:0">기분 일지를 쓰는 중에 <b>✦ AI 가이드</b>를 누르면, 적은 내용과 앱에 쌓인 기록을 보고 왜곡을 짚어 주고 맞는 기법을 추천합니다.</p>
+<div class="field"><label for="aiKey">Anthropic API 키</label><input type="password" id="aiKey" autocomplete="off" placeholder="${on?'저장됨 · 바꾸려면 새로 입력':'sk-ant-...'}"></div>
+<div class="field"><label for="aiModel">모델</label><select id="aiModel">${AI_MODELS.map(m=>`<option value="${m[0]}"${AI.model===m[0]?' selected':''}>${m[1]}</option>`).join('')}</select></div>
+<div class="controls" style="justify-content:flex-start"><button class="btn sm primary" data-aisave>저장</button>${on?'<button class="btn sm" data-aidel>키 삭제</button>':''}</div>
+<p class="hint" style="margin:0">키는 이 폰에만 저장되고 GitHub 코드에는 들어가지 않습니다. AI 가이드를 누를 때만 일지 내용이 Anthropic으로 전송되며, 사용량만큼 요금이 부과됩니다. 키는 console.anthropic.com에서 만들 수 있어요.</p></details>`;}
 function wizard(){
-const S={step:0,sit:'',emo:{},thought:'',b0:80,r1:'',r2:'',tgt:{},dist:[],tech:null,ans:[],pos:'',posB:80,b1:null,now:{}};
+const S={step:0,sit:'',emo:{},thought:'',b0:80,r1:'',r2:'',tgt:{},dist:[],tech:null,ans:[],pos:'',posB:80,b1:null,now:{},ai:{turns:[],last:null,loading:false,err:''}};
 let lastStep=-1;
+const STEPN=['상황','감정','생각','긍정적 재구성','왜곡 찾기','기법 적용','새로운 생각','결과'];
+function wState(){const ek=Object.keys(S.emo);return `현재 기분 일지 (지금 단계: ${STEPN[S.step]})
+상황: ${S.sit||'-'}
+감정: ${ek.length?ek.map(k=>`${k} ${S.emo[k]}%`+(S.tgt[k]!=null?`(목표 ${S.tgt[k]}%)`:'')).join(', '):'-'}
+부정적인 생각: ${S.thought||'-'} (믿음 ${S.b0}%)
+긍정적 재구성: ${[S.r1,S.r2].filter(Boolean).join(' / ')||'-'}
+내가 고른 왜곡: ${S.dist.map(d=>DN[d]).join(', ')||'-'}
+적용 중인 기법: ${S.tech?S.tech+'. '+byN(S.tech).t:'-'}${S.tech&&S.ans.some(Boolean)?' / 답: '+S.ans.filter(Boolean).join(' / '):''}
+새 생각: ${S.pos||'-'}`;}
+async function aiAsk(extra){read();if(!AI.key){S.ai.err='NOKEY';draw();return;}
+if(!S.sit.trim()&&!S.thought.trim()&&!extra){G.toast('상황이나 생각을 먼저 조금 적어 주세요');return;}
+const content=S.ai.turns.length?`${extra?'추가 질문: '+extra+'\n\n':''}${wState()}\n\n같은 JSON 형식으로 답해 줘.`:`${wState()}\n\n앱에 쌓인 최근 기록:\n${aiHistory()}${extra?'\n\n질문: '+extra:''}\n\n위 내용을 보고 JSON으로 가이드해 줘.`;
+const msgs=S.ai.turns.concat([{role:'user',content}]);S.ai.loading=true;S.ai.err='';draw();
+try{const txt=await aiCall(msgs);S.ai.turns=msgs.concat([{role:'assistant',content:txt}]);S.ai.last=aiParse(txt);}
+catch(e){S.ai.err=e.message==='NOKEY'?'NOKEY':e.message;}
+S.ai.loading=false;draw();}
+function aiPanel(){const A=S.ai;
+if(A.err==='NOKEY')return `<div class="aibox"><b>✦ AI 가이드</b><p class="sub" style="margin:0">API 키가 아직 없어요. 마음 탭의 "AI 가이드" 카드에서 키를 저장한 뒤 다시 눌러 주세요.</p></div>`;
+if(A.loading)return `<div class="aibox"><b>✦ AI가 읽고 있어요…</b><p class="sub" style="margin:0">적은 내용과 지난 기록을 함께 보고 있습니다.</p></div>`;
+if(A.err)return `<div class="aibox warn"><b>AI 호출 실패</b><p class="sub" style="margin:0">${esc(A.err)}</p></div>`;
+const r=A.last;if(!r)return '';
+const ds=(r.distortions||[]).filter(d=>DN[d.key]),ts=(r.techniques||[]).filter(t=>byN(+t.n));
+return `<details class="aibox" open><summary><b>✦ AI 가이드</b></summary>
+${r.safety?`<div class="verdict warn"><b>지금 많이 힘드시다면 혼자 버티지 마세요.</b><br>자살예방상담전화 <b>109</b> (24시간) · 정신건강위기상담 <b>1577-0199</b></div>`:''}
+<p style="margin:0;white-space:pre-wrap">${esc(r.reply||'')}</p>
+${r.pattern?`<p class="sub" style="margin:0">🔁 ${esc(r.pattern)}</p>`:''}
+${ds.length?`<div class="lbl">보이는 왜곡</div><ul class="ailist">${ds.map(d=>`<li><b>${DN[d.key]}</b> · ${esc(d.why||'')}</li>`).join('')}</ul><button class="btn sm" data-aidist="${ds.map(d=>d.key).join(',')}">이 왜곡들 체크하기</button>`:''}
+${ts.length?`<div class="lbl">추천 기법</div>${ts.map(t=>`<div class="aitech"><div><b>${+t.n}. ${esc(byN(+t.n).t)}</b><br><span class="sub">${esc(t.why||'')}</span>${t.first_step?`<br><span>→ ${esc(t.first_step)}</span>`:''}</div><button class="btn sm primary" data-aitech="${+t.n}">이 기법으로</button></div>`).join('')}`:''}
+${(r.questions||[]).length?`<div class="lbl">스스로에게 물어보기</div><ul class="ailist">${r.questions.map(q=>`<li>${esc(q)}</li>`).join('')}</ul>`:''}
+${(r.reframe_hints||[]).length?`<div class="lbl">새 생각을 쓸 때</div><ul class="ailist">${r.reframe_hints.map(q=>`<li>${esc(q)}</li>`).join('')}</ul>`:''}
+<div class="addrow"><input type="text" id="aiQ" placeholder="AI에게 더 물어보기"><button class="btn sm" data-aiask>보내기</button></div>
+<p class="hint" style="margin:0">AI의 답은 참고용입니다. 판단은 직접 하세요.</p></details>`;}
 const STEPS=['상황','감정','생각','긍정적 재구성','왜곡 찾기','기법 적용','새로운 생각','결과'];
 sheet('생각 하나 풀어보기','','','');
 function read(){const s=S.step;
@@ -982,7 +1062,7 @@ if(s===2){S.thought=val('wt');S.b0=+val('wb0');}
 if(s===3){S.r1=val('wr1');S.r2=val('wr2');Object.keys(S.emo).forEach((k,i)=>{S.tgt[k]=+val('wg'+i);});}
 if(s===5&&S.tech)S.ans=techQ().map((_,i)=>val('wa'+i));
 if(s===6){S.pos=val('wp');S.posB=+val('wpb');S.b1=+val('wb1');Object.keys(S.emo).forEach((k,i)=>{S.now[k]=+val('wn'+i);});}}
-function recs(){const c={};S.dist.forEach(d=>(MAP[d]||[]).forEach((n,i)=>{c[n]=(c[n]||0)+(10-i);}));
+function recs(){const c={};(S.ai.last&&S.ai.last.techniques||[]).forEach((t,i)=>{if(byN(+t.n))c[+t.n]=(c[+t.n]||0)+100-i;});S.dist.forEach(d=>(MAP[d]||[]).forEach((n,i)=>{c[n]=(c[n]||0)+(10-i);}));
 const r=Object.keys(c).map(Number).sort((a,b)=>c[b]-c[a]).slice(0,6);return r.length?r:[3,4,5,19,21,10];}
 function techCard(){if(!S.tech)return '';const t=byN(S.tech);return `<div class="card"><div class="eyebrow">${t.n}번 · ${CATS[t.c]}</div><p style="margin:0;font-size:14px;color:var(--muted)">${esc(t.d)}</p>${guideHTML(t,false)}
 ${techQ().map((x,i)=>`<div class="field"><label for="wa${i}">${esc(x)}</label><textarea id="wa${i}">${esc(S.ans[i]||'')}</textarea></div>`).join('')}</div>`;}
@@ -1015,6 +1095,8 @@ h+=`<div class="verdict${ok?'':' warn'}">${ok?`처음 생각에 대한 믿음이
 ${ek.map(k=>`<div class="row"><span>${k}</span><div class="bars"><i class="b0" style="width:${Math.max(2,S.emo[k])}%"></i><i class="b1" style="width:${Math.max(2,S.now[k])}%"></i></div></div>`).join('')}</div>
 <div class="pill"><i style="background:var(--ochre)"></i>처음 <i style="background:var(--moss)"></i>지금</div>
 <div class="bubble me"><small>새 생각 · 믿음 ${S.posB}%</small>${esc(S.pos)}</div>`;}
+h+=aiPanel();
+if(s<7)h+=`<button class="btn ai" id="wai"${S.ai.loading?' disabled':''}>✦ AI 가이드${S.ai.last?' 다시 받기':' 받기'}</button>`;
 h+=`<div class="finish">${s===7?`<button class="btn primary" id="wsave">저장하고 닫기</button><button class="btn" id="wmore">다른 기법 더 해보기</button>`:`<button class="btn primary" id="wnext">${s===6?'결과 보기':'다음'}</button>${s?'<button class="btn" id="wprev">이전</button>':''}`}</div>`;
 body(h,s!==lastStep);lastStep=s;
 if($('wnext'))$('wnext').onclick=next;if($('wprev'))$('wprev').onclick=()=>{read();S.step--;draw();};
@@ -1028,7 +1110,11 @@ if(s===1&&!Object.keys(S.emo).length){G.toast('감정을 하나 이상 골라 �
 if(s===2&&!S.thought.trim()){G.toast('생각을 적어 주세요');return;}
 if(s===6&&!S.pos.trim()){G.toast('새 생각을 적어 주세요');return;}
 S.step++;draw();}
-$('sheetIn').onclick=e=>{let b=e.target.closest('[data-emo]');if(b){read();const k=b.dataset.emo;if(k in S.emo)delete S.emo[k];else S.emo[k]=60;b.classList.toggle('on',k in S.emo);const y=$('sheet').scrollTop;$('emoRs').innerHTML=emoRs();$('sheet').scrollTop=y;return;}
+$('sheetIn').onclick=e=>{if(e.target.id==='wai'){aiAsk();return;}
+if(e.target.closest('[data-aiask]')){const q=val('aiQ').trim();if(!q){G.toast('질문을 적어 주세요');return;}aiAsk(q);return;}
+{const x=e.target.closest('[data-aidist]');if(x){read();x.dataset.aidist.split(',').forEach(k=>{if(!S.dist.includes(k))S.dist.push(k);});G.toast('왜곡을 체크했어요');if(S.step===4)draw();return;}}
+{const x=e.target.closest('[data-aitech]');if(x){read();const n=+x.dataset.aitech;if(S.tech!==n){S.tech=n;S.ans=[];}if(!S.thought.trim()){G.toast('먼저 3단계에서 생각을 적어 주세요');return;}S.step=5;draw();return;}}
+let b=e.target.closest('[data-emo]');if(b){read();const k=b.dataset.emo;if(k in S.emo)delete S.emo[k];else S.emo[k]=60;b.classList.toggle('on',k in S.emo);const y=$('sheet').scrollTop;$('emoRs').innerHTML=emoRs();$('sheet').scrollTop=y;return;}
 b=e.target.closest('[data-dist]');if(b){const k=b.dataset.dist;S.dist=S.dist.includes(k)?S.dist.filter(x=>x!==k):S.dist.concat(k);b.classList.toggle('on');return;}
 b=e.target.closest('[data-wt]');if(b){read();const n=+b.dataset.wt;if(S.tech!==n){S.tech=n;S.ans=[];}$('sheetIn').querySelectorAll('[data-wt]').forEach(c=>c.classList.toggle('on',+c.dataset.wt===n));const y=$('sheet').scrollTop;$('wtCard').innerHTML=techCard();$('sheet').scrollTop=y;return;}
 b=e.target.closest('[data-val]');if(b){const ta=$('wr2');ta.value=(ta.value.trim()?ta.value.trim()+', ':'')+b.dataset.val;}};
@@ -1052,6 +1138,7 @@ const lib=T.filter(t=>cat==='all'||t.c===cat);
 root.innerHTML=`<div class="focus"><div class="eyebrow">왜곡된 생각을 바로잡는 50가지 방법</div><h2>마음 도구</h2><p>기분은 생각에서 옵니다. 괴로운 생각 하나를 붙잡아 사실인지 따져 보고, 더 현실적인 생각으로 바꿔 봅니다.</p></div>
 <button class="hero" data-mwiz><span class="eyebrow" style="color:inherit;opacity:.8">5~10분 · 기분 일지</span><b>생각 하나 풀어보기</b><span>상황 → 감정 → 생각 → 재구성 → 왜곡 찾기 → 기법 → 새 생각</span><span class="go">시작</span></button>
 ${counterHTML()}
+${aiCardHTML()}
 <div class="sec-h"><h3>바로 쓰는 도구</h3><span>눌러서 시작</span></div>
 <div class="tgrid">${QUICK.map(n=>{const t=byN(n);return `<button class="tool" data-mt="${n}"><span class="n">${n}번 · ${CATS[t.c]}</span><b>${t.t}</b><span>${esc(t.d.split('.')[0])}.</span></button>`;}).join('')}</div>
 <div class="sec-h"><h3>왜곡 커닝 페이퍼</h3><span>왜곡 → 잘 듣는 기법</span></div>
@@ -1076,6 +1163,8 @@ if(!ev.target.isConnected||ev.target.closest('#sheet'))return;
 let b=ev.target.closest('[data-mwiz]');if(b){wizard();return;}
 b=ev.target.closest('[data-mt]');if(b){openTech(+b.dataset.mt);return;}
 b=ev.target.closest('[data-cnt]');if(b){bump(+b.dataset.cnt);return;}
+b=ev.target.closest('[data-aisave]');if(b){const k=val('aiKey').trim();if(k)AI.key=k;AI.model=val('aiModel')||AI.model;if(!AI.key){G.toast('API 키를 입력해 주세요');return;}aiSave();renderMind();G.toast('AI 가이드 설정을 저장했어요');return;}
+b=ev.target.closest('[data-aidel]');if(b){if(!b.dataset.arm){b.dataset.arm=1;b.textContent='한 번 더 누르면 삭제';return;}AI.key='';aiSave();renderMind();G.toast('키를 삭제했어요');return;}
 b=ev.target.closest('[data-cheat]');if(b){cheat=cheat===b.dataset.cheat?null:b.dataset.cheat;renderMind();return;}
 b=ev.target.closest('[data-cat]');if(b){cat=b.dataset.cat;renderMind();return;}
 b=ev.target.closest('[data-jdel]');if(b){if(!b.dataset.arm){b.dataset.arm=1;b.textContent='한 번 더 누르면 삭제';return;}
