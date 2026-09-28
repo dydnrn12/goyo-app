@@ -245,6 +245,7 @@ input[type=range]{width:100%;accent-color:var(--moss)}
 .mindtoday{background:var(--surface);border:1px dashed var(--line);border-radius:16px;padding:14px 16px;display:flex;flex-direction:column;gap:6px}
 .mindtoday b{font-family:var(--serif);font-size:17px}
 .mindtoday .s{font-size:13px;color:var(--muted)}
+.sheet{overscroll-behavior:contain}.sheet,.sheet *{overflow-anchor:none}
 @media (prefers-reduced-motion: reduce){
 .orb{transition:none!important}
 .ring .fg{transition:none}
@@ -684,7 +685,7 @@ const CLOSE='<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke=
 function sheet(eb,title,sub,body){
 G.open();$('sheetIn').innerHTML=`<div class="sheet-top"><div><div class="eyebrow">${eb}</div><h2>${title}</h2>${sub?`<p class="sub">${sub}</p>`:''}</div><button class="iconbtn" data-x aria-label="닫기">${CLOSE}</button></div>${body}`;
 $('sheetIn').querySelector('[data-x]').onclick=G.close;}
-function body(html){const top=$('sheetIn').querySelector('.sheet-top');$('sheetIn').innerHTML='';$('sheetIn').appendChild(top);$('sheetIn').insertAdjacentHTML('beforeend',html);}
+function body(html,reset){const sh=$('sheet'),y=sh.scrollTop,si=$('sheetIn'),top=si.querySelector('.sheet-top');const tp=document.createElement('template');tp.innerHTML=html;si.replaceChildren(top,tp.content);sh.scrollTop=reset?0:y;}
 function rng(id,v,label){return `<div class="field"><label for="${id}">${label}</label><div class="rng"><input type="range" id="${id}" min="0" max="100" step="5" value="${v}"><output id="${id}o" class="num">${v}</output></div></div>`;}
 const val=id=>{const e=$(id);return e?e.value:'';};
 function addNote(n,title,pairs){M.notes.unshift({id:uid(),ts:Date.now(),n,title,pairs});save();G.toast('기록했습니다');renderMind();}
@@ -740,7 +741,7 @@ ${S.tr.map((x,i)=>{const lo=Math.min(x.b,x.w,x.a),hi=Math.max(x.b,x.w,x.a);retur
 <div class="field"><label for="rplan">점수가 가장 낮은 영역 하나를 골라, 나아질 작은 계획을 적어보세요.</label><textarea id="rplan">${esc(S.plan)}</textarea></div>
 <div class="finish"><button class="btn primary" id="rsave">기록 저장</button></div>`);
 $('rsave').onclick=()=>{read();const p=[['역할',S.role]];S.tr.filter(x=>x.n).forEach(x=>p.push([x.n,`잘할 때 ${x.b} · 못할 때 ${x.w} · 보통 ${x.a}`]));if(S.plan)p.push(['계획',S.plan]);addNote(14,t.t,p);G.close();};}
-$('sheetIn').onchange=e=>{if(e.target.matches('input')){read();const y=$('sheet').scrollTop;draw();$('sheet').scrollTop=y;}};
+$('sheetIn').onchange=e=>{if(e.target.matches('input')){read();draw();}};
 draw();}
 
 /* ---------- voices (19) ---------- */
@@ -787,7 +788,7 @@ ${mode==='if'?rng('apr',prob,'가장 두려운 그 일이 실제로 일어날 �
 if($('amore'))$('amore').onclick=()=>{read();if(!chain[chain.length-1].trim()){G.toast('먼저 칸을 채워 주세요');return;}chain.push('');draw();$('ac'+(chain.length-1)).focus();};
 if($('abot'))$('abot').onclick=()=>{read();if(!chain[0].trim()){G.toast('시작할 생각을 적어 주세요');return;}bottom=true;draw();};
 if($('asave'))$('asave').onclick=()=>{read();const p=chain.filter(s=>s.trim()).map((s,i)=>[i?`↓ ${i}`:'시작',s]);if(picked.length)p.push(['핵심 신념',picked.join(', ')]);if(mode==='if')p.push(['가능성',prob+'%'],['받아들일 수 있나',acc||'-']);addNote(t.n,t.t,p);G.close();};}
-$('sheetIn').onclick=e=>{const b=e.target.closest('[data-bel]');if(!b)return;read();const v=b.dataset.bel;picked=picked.includes(v)?picked.filter(x=>x!==v):picked.concat(v);const y=$('sheet').scrollTop;draw();$('sheet').scrollTop=y;};
+$('sheetIn').onclick=e=>{const b=e.target.closest('[data-bel]');if(!b)return;const v=b.dataset.bel;picked=picked.includes(v)?picked.filter(x=>x!==v):picked.concat(v);b.classList.toggle('on',picked.includes(v));};
 draw();}
 
 /* ---------- list editor helper ---------- */
@@ -817,10 +818,10 @@ $('sheetIn').oninput=e=>{if(e.target.id==='cw'){S.w=+e.target.value;$('cwo2').te
 $('sheetIn').onclick=e=>{const m=e.target.closest('[data-cm]');if(m){read();S.mode=m.dataset.cm;draw();return;}listClick(e,S,read,draw);};
 $('sheetIn').onkeydown=e=>{if(e.key==='Enter'&&e.target.id&&e.target.id.startsWith('in_')){e.preventDefault();const k=e.target.id.slice(3);addItem(S,k,read,draw);}};
 draw();}
-function addItem(S,k,read,draw){const v=val('in_'+k).trim();if(!v)return;read();S[k].push(v);const y=$('sheet').scrollTop;draw();$('sheet').scrollTop=y;const i=$('in_'+k);if(i)i.focus({preventScroll:true});}
+function addItem(S,k,read,draw){const v=val('in_'+k).trim();if(!v)return;read();S[k].push(v);draw();const i=$('in_'+k);if(i)i.focus({preventScroll:true});}
 function listClick(e,S,read,draw){const a=e.target.closest('[data-add]');if(a){addItem(S,a.dataset.add,read,draw);return true;}
-const r=e.target.closest('[data-rm]');if(r){const[k,i]=r.dataset.rm.split(':');read();S[k].splice(+i,1);const y=$('sheet').scrollTop;draw();$('sheet').scrollTop=y;return true;}
-const s=e.target.closest('[data-sug]');if(s){const i=s.dataset.sug.indexOf(':');const k=s.dataset.sug.slice(0,i),v=s.dataset.sug.slice(i+1);read();if(!S[k].includes(v))S[k].push(v);const y=$('sheet').scrollTop;draw();$('sheet').scrollTop=y;return true;}return false;}
+const r=e.target.closest('[data-rm]');if(r){const[k,i]=r.dataset.rm.split(':');read();S[k].splice(+i,1);draw();return true;}
+const s=e.target.closest('[data-sug]');if(s){const i=s.dataset.sug.indexOf(':');const k=s.dataset.sug.slice(0,i),v=s.dataset.sug.slice(i+1);read();if(!S[k].includes(v))S[k].push(v);draw();return true;}return false;}
 
 /* ---------- devil (30) ---------- */
 function devil(t){let x='',round=0,wins=0,log=[];
@@ -892,7 +893,7 @@ ${C.pl2?`<div class="row"><span>${C.pl2.replace('예상 ','')}</span><div class=
 :`<small>${C.pl} ${x.p}${C.pl2?' · '+C.pl2+' '+x.p2:''}</small><div class="controls" style="justify-content:flex-start"><button class="btn sm" data-popen="${x.id}">해봤어요 · 결과 입력</button><button class="btn sm" data-pdel="${x.id}">삭제</button></div>`}</div>`;}).join('')}</div>
 <div class="pill"><i style="background:var(--ochre)"></i>예상 <i style="background:var(--moss)"></i>실제</div>${summary()}`);$('sheet').scrollTop=y;}
 $('sheetIn').onclick=e=>{let b=e.target.closest('[data-ps]');if(b){$('pn').value=b.dataset.ps;return;}
-b=e.target.closest('[data-pw]');if(b){who=b.dataset.pw;draw();return;}
+b=e.target.closest('[data-pw]');if(b){who=b.dataset.pw;$('sheetIn').querySelectorAll('[data-pw]').forEach(c=>c.classList.toggle('on',c.dataset.pw===who));return;}
 if(e.target.id==='padd'){const n=val('pn').trim();if(!n){G.toast('무엇을 할지 적어 주세요');return;}M.preds.unshift({id:uid(),ts:Date.now(),mode,n:t.n,name:n,who:mode==='joy'?who:null,p:+val('pp'),p2:C.pl2?+val('pp2'):null,a:null});save();draw();G.toast('예측을 기록했습니다. 해본 뒤 결과를 입력하세요');return;}
 b=e.target.closest('[data-popen]');if(b){open=b.dataset.popen;draw();return;}
 b=e.target.closest('[data-pdel]');if(b){if(b.dataset.arm){M.preds=M.preds.filter(x=>x.id!==b.dataset.pdel);save();draw();}else{b.dataset.arm=1;b.textContent='한 번 더 누르면 삭제';}return;}
@@ -902,6 +903,7 @@ draw();}
 /* ---------- wizard: 생각 하나 풀어보기 ---------- */
 function wizard(){
 const S={step:0,sit:'',emo:{},thought:'',b0:80,r1:'',r2:'',tgt:{},dist:[],tech:null,ans:[],pos:'',posB:80,b1:null,now:{}};
+let lastStep=-1;
 const STEPS=['상황','감정','생각','긍정적 재구성','왜곡 찾기','기법 적용','새로운 생각','결과'];
 sheet('생각 하나 풀어보기','','','');
 function read(){const s=S.step;
@@ -913,13 +915,16 @@ if(s===5&&S.tech)S.ans=techQ().map((_,i)=>val('wa'+i));
 if(s===6){S.pos=val('wp');S.posB=+val('wpb');S.b1=+val('wb1');Object.keys(S.emo).forEach((k,i)=>{S.now[k]=+val('wn'+i);});}}
 function recs(){const c={};S.dist.forEach(d=>(MAP[d]||[]).forEach((n,i)=>{c[n]=(c[n]||0)+(10-i);}));
 const r=Object.keys(c).map(Number).sort((a,b)=>c[b]-c[a]).slice(0,6);return r.length?r:[3,4,5,19,21,10];}
+function techCard(){if(!S.tech)return '';const t=byN(S.tech);return `<div class="card"><div class="eyebrow">${t.n}번 · ${CATS[t.c]}</div><p style="margin:0;font-size:14px;color:var(--muted)">${esc(t.d)}</p>
+${techQ().map((x,i)=>`<div class="field"><label for="wa${i}">${esc(x)}</label><textarea id="wa${i}">${esc(S.ans[i]||'')}</textarea></div>`).join('')}</div>`;}
 function techQ(){const t=byN(S.tech);if(S.tech===19)return[`부정적인 목소리: "${toYou(S.thought)}" — "나는~"으로 방어해 보세요.`,'완승했나요? 아니라면 수용 역설로 한 번 더: "맞아, ~. 그래도 ~."'];return t.q;}
+const emoRs=()=>Object.keys(S.emo).map((k,i)=>rng('we'+i,S.emo[k],k+' (%)')).join('');
 const q=(t,h)=>`<div class="q">${t}</div>${h?`<p class="sub" style="margin:0">${h}</p>`:''}`;
 function draw(){const s=S.step;const ek=Object.keys(S.emo);
 $('sheetIn').querySelector('h2').textContent=STEPS[s];$('sheetIn').querySelector('.eyebrow').textContent=`생각 하나 풀어보기 · ${s+1}/${STEPS.length}`;
 let h=`<div class="dots">${STEPS.map((_,i)=>`<i class="${i<=s?'on':''}"></i>`).join('')}</div>`;
 if(s===0)h+=`${q('지금 무엇 때문에 마음이 불편한가요?','한두 문장이면 충분합니다. 사실만 적어 보세요.')}<textarea id="ws" style="min-height:110px" placeholder="예: 수업 준비를 못 해서 학생 앞에서 버벅였다">${esc(S.sit)}</textarea>`;
-if(s===1)h+=`${q('어떤 감정이 드나요?','해당하는 것을 모두 고르고, 강도를 매겨 보세요.')}<div class="chips">${EMO.map(e=>`<button class="chip${e in S.emo?' on':''}" data-emo="${e}">${e}</button>`).join('')}</div>${ek.map((k,i)=>rng('we'+i,S.emo[k],k+' (%)')).join('')}`;
+if(s===1)h+=`${q('어떤 감정이 드나요?','해당하는 것을 모두 고르고, 강도를 매겨 보세요.')}<div class="chips">${EMO.map(e=>`<button class="chip${e in S.emo?' on':''}" data-emo="${e}">${e}</button>`).join('')}</div><div id="emoRs" class="block">${emoRs()}</div>`;
 if(s===2)h+=`${q('그 순간 머릿속에 스친 생각은?','머릿속 말 그대로, "나는 ~" 형태로 적어 보세요.')}<textarea id="wt" style="min-height:90px" placeholder="예: 나는 선생 자격이 없어">${esc(S.thought)}</textarea>${rng('wb0',S.b0,'이 생각을 지금 얼마나 믿나요? (%)')}`;
 if(s===3)h+=`${q('1번 긍정적 재구성','이 감정을 없애기 전에, 이 감정이 지켜주는 것부터 봅니다.')}
 <div class="field"><label for="wr1">이 생각이나 감정이 나에게 주는 이점은?</label><textarea id="wr1" placeholder="예: 다음 수업은 더 철저히 준비하게 만든다">${esc(S.r1)}</textarea></div>
@@ -929,9 +934,7 @@ ${ek.length?`${q('2번 마법 다이얼','좋은 점은 남기고, 어디까지 
 if(s===4)h+=`<div class="bubble"><small>나의 생각</small>${esc(S.thought)}</div>${q('이 생각에 어떤 왜곡이 들어 있나요?','해당하는 것을 모두 누르세요. 보통 여러 개가 겹칩니다.')}
 <div class="dlist">${DIST.map(d=>`<button class="dist${S.dist.includes(d[0])?' on':''}" data-dist="${d[0]}"><b>${d[1]}</b><span>${d[2]}</span></button>`).join('')}</div>`;
 if(s===5){const r=recs();h+=`${q('어떤 기법으로 반박해 볼까요?',S.dist.length?'고른 왜곡에 잘 듣는 순서로 추천합니다.':'왜곡을 고르지 않아 기본 추천을 보여줍니다.')}
-<div class="chips">${r.map(n=>`<button class="chip${S.tech===n?' on':''}" data-wt="${n}">${byN(n).t}</button>`).join('')}</div>`;
-if(S.tech){const t=byN(S.tech);h+=`<div class="card"><div class="eyebrow">${t.n}번 · ${CATS[t.c]}</div><p style="margin:0;font-size:14px;color:var(--muted)">${esc(t.d)}</p>
-${techQ().map((x,i)=>`<div class="field"><label for="wa${i}">${esc(x)}</label><textarea id="wa${i}">${esc(S.ans[i]||'')}</textarea></div>`).join('')}</div>`;}}
+<div class="chips">${r.map(n=>`<button class="chip${S.tech===n?' on':''}" data-wt="${n}">${byN(n).t}</button>`).join('')}</div><div id="wtCard">${techCard()}</div>`;}
 if(s===6)h+=`<div class="bubble"><small>처음 생각 · 믿음 ${S.b0}%</small>${esc(S.thought)}</div>
 ${q('더 현실적인 새 생각','100% 사실이면서, 처음 생각을 약하게 만드는 문장이어야 효과가 있습니다.')}
 <textarea id="wp" style="min-height:90px" placeholder="예: 오늘 준비가 부족했던 건 맞아. 그래도 8년 동안 학생들을 가르쳐 왔고, 다음 수업은 준비할 수 있어.">${esc(S.pos)}</textarea>
@@ -944,7 +947,7 @@ ${ek.map(k=>`<div class="row"><span>${k}</span><div class="bars"><i class="b0" s
 <div class="pill"><i style="background:var(--ochre)"></i>처음 <i style="background:var(--moss)"></i>지금</div>
 <div class="bubble me"><small>새 생각 · 믿음 ${S.posB}%</small>${esc(S.pos)}</div>`;}
 h+=`<div class="finish">${s===7?`<button class="btn primary" id="wsave">저장하고 닫기</button><button class="btn" id="wmore">다른 기법 더 해보기</button>`:`<button class="btn primary" id="wnext">${s===6?'결과 보기':'다음'}</button>${s?'<button class="btn" id="wprev">이전</button>':''}`}</div>`;
-body(h);$('sheet').scrollTop=0;
+body(h,s!==lastStep);lastStep=s;
 if($('wnext'))$('wnext').onclick=next;if($('wprev'))$('wprev').onclick=()=>{read();S.step--;draw();};
 if($('wmore'))$('wmore').onclick=()=>{S.step=5;S.tech=null;S.ans=[];draw();};
 if($('wsave'))$('wsave').onclick=()=>{const t=S.tech?byN(S.tech):null;
@@ -956,9 +959,9 @@ if(s===1&&!Object.keys(S.emo).length){G.toast('감정을 하나 이상 골라 �
 if(s===2&&!S.thought.trim()){G.toast('생각을 적어 주세요');return;}
 if(s===6&&!S.pos.trim()){G.toast('새 생각을 적어 주세요');return;}
 S.step++;draw();}
-$('sheetIn').onclick=e=>{let b=e.target.closest('[data-emo]');if(b){read();const k=b.dataset.emo;if(k in S.emo)delete S.emo[k];else S.emo[k]=60;const y=$('sheet').scrollTop;draw();$('sheet').scrollTop=y;return;}
+$('sheetIn').onclick=e=>{let b=e.target.closest('[data-emo]');if(b){read();const k=b.dataset.emo;if(k in S.emo)delete S.emo[k];else S.emo[k]=60;b.classList.toggle('on',k in S.emo);const y=$('sheet').scrollTop;$('emoRs').innerHTML=emoRs();$('sheet').scrollTop=y;return;}
 b=e.target.closest('[data-dist]');if(b){const k=b.dataset.dist;S.dist=S.dist.includes(k)?S.dist.filter(x=>x!==k):S.dist.concat(k);b.classList.toggle('on');return;}
-b=e.target.closest('[data-wt]');if(b){read();const n=+b.dataset.wt;if(S.tech!==n){S.tech=n;S.ans=[];}const y=$('sheet').scrollTop;draw();$('sheet').scrollTop=y;return;}
+b=e.target.closest('[data-wt]');if(b){read();const n=+b.dataset.wt;if(S.tech!==n){S.tech=n;S.ans=[];}$('sheetIn').querySelectorAll('[data-wt]').forEach(c=>c.classList.toggle('on',+c.dataset.wt===n));const y=$('sheet').scrollTop;$('wtCard').innerHTML=techCard();$('sheet').scrollTop=y;return;}
 b=e.target.closest('[data-val]');if(b){const ta=$('wr2');ta.value=(ta.value.trim()?ta.value.trim()+', ':'')+b.dataset.val;}};
 draw();}
 
