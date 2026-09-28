@@ -249,6 +249,9 @@ input[type=range]{width:100%;accent-color:var(--moss)}
 .card .guide,.lib .guide{background:var(--bg)}
 .guide summary{cursor:pointer;font-weight:600;color:var(--moss);font-size:13px}
 .guide ol{margin:8px 0 2px;padding-left:20px;display:flex;flex-direction:column;gap:6px;color:var(--ink);line-height:1.55}
+.soc summary{cursor:pointer;font-size:14px;color:var(--moss)}
+.soc summary b{color:var(--ink)}
+.soc[open]{gap:10px}
 .sheet{overscroll-behavior:contain}.sheet,.sheet *{overflow-anchor:none}
 @media (prefers-reduced-motion: reduce){
 .orb{transition:none!important}
@@ -665,7 +668,7 @@ const T=[
 {n:32,t:'의사 결정 도구',c:'motiv',k:'decide',d:'최종 후보 두 개의 장단점에 무게를 매겨 합산하고, 총점으로 선택을 정리합니다.',q:['선택지 A와 B는?','각각의 장점과 단점은?']},
 {n:33,t:'일일 활동 시간표',c:'motiv',d:'하루 동안 한 일을 시간별로 적고, 만족도를 0~5로 매겨 어떤 활동에서 기분이 좋아지는지 찾습니다.',q:['오늘 시간대별로 한 일과 만족도(0~5)는?','가장 만족스러웠던 활동은?','내일 더 넣고 싶은 활동은?']},
 {n:34,t:'즐거움 예측 표',c:'motiv',k:'joy',d:'할 일의 만족도를 미리 예측하고, 해본 뒤 실제 만족도와 비교합니다. 대개 현실이 예측보다 낫습니다. 혼자 할 때와 함께할 때도 비교해 보세요.',q:['활동과 예상 만족도는?','실제 만족도는?']},
-{n:35,t:'미루지 않기 표',c:'motiv',k:'task',d:'미루던 일을 작은 단계로 쪼개고, 예상 난이도·만족도를 적은 뒤 해보고 실제와 비교합니다.',q:['미루던 일의 첫 단계는?','예상 난이도와 실제 난이도는?']},
+{n:35,t:'미루지 않기 표',c:'motiv',k:'task',d:'미루던 일을 작은 단계로 쪼개고, 예상 난이도·만족도를 적은 뒤 해보고 실제와 비교합니다.',q:['미루던 일의 첫 단계는?','"시작할 수 없다"는 말은 정말 무슨 뜻인가? 할 수 없는 건가, 하기 싫은 건가?','예상 난이도와 실제 난이도는?']},
 {n:36,t:'점진적 노출 및 홍수',c:'expo',k:'dare',d:'두려운 것에 조금씩(점진적) 혹은 한 번에(홍수) 다가가, 불안이 스스로 가라앉을 때까지 머무릅니다.',q:['두려운 상황의 단계는?','오늘 해볼 단계는?']},
 {n:37,t:'반응 저지',c:'expo',d:'확인하기, 씻기 같은 충동이 올 때 그 행동을 하지 않고 버텨 봅니다.',q:['참기 힘든 충동은?','오늘 참아볼 시간은?','참아보니 불안은 어떻게 변했나요?']},
 {n:38,t:'주의 분산',c:'expo',d:'불안할 때 퍼즐, 숫자 거꾸로 세기, 대화처럼 주의를 붙잡는 다른 활동으로 돌립니다.',q:['불안할 때 주의를 돌릴 활동 세 가지는?']},
@@ -718,7 +721,7 @@ const GUIDE={
 32:['후보를 다 적은 뒤 최종 후보 둘(A, B)만 남깁니다.','각각 장점(+)과 단점(−)을 적고 무게를 매겨 합칩니다.','읽는 법: 한쪽만 +면 답이 나온 것. 둘 다 +면 어느 쪽도 괜찮음. 둘 다 −면 제3의 길 탐색. 둘 다 0 근처면 보류.','점수는 결정을 대신해 주는 게 아니라 생각을 정리해 주는 도구입니다. 몇 번이고 고쳐 써도 됩니다.'],
 33:['하루를 시간대별로 기록하고, 활동마다 만족도를 0~5로 매깁니다.','며칠치를 모아 보면 기분을 올리는 활동과 깎는 활동이 보입니다. 올리는 쪽을 내일 일정에 하나 더 넣습니다.'],
 34:['해볼 만한 활동(재미, 배움, 성장)을 고르고, 누구와 할지도 적습니다. 혼자 하는 것도 섞으세요.','하기 전에 만족도를 예측하고, 한 뒤에 실제 만족도를 매깁니다.','예측이 현실보다 비관적이었다면, 그 차이가 "해봐도 소용없어"라는 생각에 대한 반박 증거가 됩니다.','혼자 한 활동과 함께한 활동의 실제 점수를 비교해 보는 것도 좋습니다.'],
-35:['미루는 일을 "10분 안에 끝나는 조각"까지 쪼갭니다.','조각마다 예상 난이도와 예상 만족도를 적고, 해본 뒤 실제 점수를 적습니다.','시작 전의 상상이 실제보다 훨씬 무거웠다는 걸 확인하는 게 목적입니다.'],
+35:['시작조차 안 된다면 먼저 위의 "소크라테스식 점검"을 펼쳐 보세요. "못 한다"는 말이 능력의 문제인지, 마음의 문제인지 질문으로 따져 봅니다.','미루는 일을 "10분 안에 끝나는 조각"까지 쪼갭니다.','조각마다 예상 난이도와 예상 만족도를 적고, 해본 뒤 실제 점수를 적습니다.','시작 전의 상상이 실제보다 훨씬 무거웠다는 걸 확인하는 게 목적입니다.'],
 36:['두려운 상황을 1~10단계 사다리로 만들고 가장 쉬운 칸부터 오릅니다(점진적 노출).','또는 가장 높은 칸에 바로 뛰어들어 버팁니다(홍수).','어느 쪽이든 핵심은 불안이 꺾일 때까지 도망치지 않고 머무는 것입니다.'],
 37:['확인하고 싶은 충동, 씻고 싶은 충동이 와도 그 행동을 미룹니다. 처음엔 몇 분부터.','불안이 오르다가 저절로 내려오는 곡선을 직접 경험하는 게 목적입니다.'],
 38:['불안이 몰려올 때 주의를 붙잡아 둘 활동 목록을 미리 만들어 둡니다(숫자 거꾸로 세기, 퍼즐, 전화 등).','노출 중에 버티는 보조 도구로 쓰고, 두려움을 피하는 핑계로는 쓰지 않습니다.'],
@@ -929,6 +932,13 @@ task:{title:'미루지 않기 표',pl:'예상 난이도',al:'실제 난이도',p
 dare:{title:'용기 도전',pl:'예상 불안',al:'실제 불안',ph:'예: 편의점 직원에게 웃으며 인사하기',better:(p,a)=>a<=p}};
 const DARE={18:['버스에서 정류장 이름을 소리 내 말하기','카페에서 엉뚱한 메뉴 물어보기','길에서 노래 흥얼거리며 걷기'],36:['피하던 장소에 5분 머물기','두려운 일의 가장 쉬운 단계 해보기'],42:['모르는 사람 3명에게 웃으며 인사','경비원·점원에게 먼저 인사하기'],43:['대화에서 내 얘기 대신 질문 3개 하기','상대 말을 요약해서 돌려주기'],44:['"사실 좀 긴장돼요"라고 말해보기','"이런 거 잘 몰라요"라고 인정하기'],45:['점원에게 가벼운 칭찬 건네기','지인에게 장난스러운 농담 하나'],46:['커피값 깎아 달라고 부탁하기','무리한 부탁 하나 해서 거절당해보기']};
 function pred(mode,t){const C=PM[mode];let who='혼자',open=null;
+const SQ=[['지금 이 일에 대해 나에게 뭐라고 말하고 있나요?','예: 오늘은 도저히 못 하겠어'],['이 일을 잘게 쪼개면 첫 번째 단계는?','예: 노트북 열고 파일 이름만 정하기'],['두 번째 단계는?',''],['그 첫 단계를 정말 "할 수 없는" 건가요? 능력이 없어서인가요, 내키지 않아서인가요?',''],['"못 한다"를 솔직한 말로 바꾸면?','예: 할 수는 있는데 시작하기 싫다'],['그렇다면 첫 단계를 딱 5분만 해볼 수 있을까요?','']];
+let soc=SQ.map(()=>''),socOpen=false;
+function socRead(){if($('sq0')){soc=SQ.map((_,i)=>val('sq'+i));socOpen=$('socBox').open;}}
+function socHTML(){return `<details class="card soc" id="socBox"${socOpen?' open':''}><summary><b>시작이 안 될 때</b> · 소크라테스식 점검 (9번)</summary>
+<p class="sub" style="margin:0">"시작할 수가 없어"라는 말은 따져 보면 "시작하고 싶지 않아"인 경우가 많습니다. 일을 잘게 나눈 뒤, 질문으로 그 말이 정말 맞는지 확인해 보세요.</p>
+${SQ.map((q,i)=>`<div class="field"><label for="sq${i}">${esc(q[0])}</label><textarea id="sq${i}" style="min-height:52px" placeholder="${esc(q[1])}">${esc(soc[i])}</textarea></div>`).join('')}
+<div class="controls" style="justify-content:flex-start"><button class="btn sm" id="socUse">첫 단계를 아래 표에 넣기</button><button class="btn sm primary" id="socSave">점검 저장</button></div></details>`;}
 sheet(`${t.n}번 · ${CATS[t.c]}`,esc(mode==='dare'?t.t:C.title),esc(t.d),'');
 function items(){return M.preds.filter(x=>x.mode===mode);}
 function summary(){const d=items().filter(x=>x.a!=null);if(!d.length)return '<p class="sub">해본 뒤 결과를 입력하면 예측과 현실의 차이가 여기 쌓입니다.</p>';
@@ -936,8 +946,8 @@ const avg=f=>Math.round(d.reduce((s,x)=>s+f(x),0)/d.length);const good=d.filter(
 let s=`<div class="stats"><div class="stat"><b class="num">${d.length}</b><span>해본 일</span></div><div class="stat"><b class="num">${avg(x=>x.p)}→${avg(x=>x.a)}</b><span>${C.pl.replace('예상 ','')} 평균</span></div><div class="stat"><b class="num">${Math.round(good/d.length*100)}%</b><span>예상보다 나음</span></div></div>`;
 if(mode==='joy'){const g=w=>{const a=d.filter(x=>x.who===w);return a.length?Math.round(a.reduce((s,x)=>s+x.a,0)/a.length):null;};const al=g('혼자'),tg=g('함께');if(al!=null&&tg!=null)s+=`<p class="sub">실제 만족도: 혼자 ${al} · 함께 ${tg}. "혼자면 비참할 수밖에 없다"는 생각이 맞는지 확인해 보세요.</p>`;}
 return s;}
-function draw(){const y=$('sheet').scrollTop;const it=items();const sug=mode==='dare'?(DARE[t.n]||DARE[36]):null;
-body(`<div class="card"><div class="field"><label for="pn">${mode==='dare'?'오늘의 도전':mode==='task'?'미루던 일 (아주 작게 쪼갠 첫 단계)':'해볼 활동'}</label><input type="text" id="pn" placeholder="${C.ph}"></div>
+function draw(){if(mode==='task')socRead();const y=$('sheet').scrollTop;const it=items();const sug=mode==='dare'?(DARE[t.n]||DARE[36]):null;
+body(`${mode==='task'?socHTML():''}<div class="card"><div class="field"><label for="pn">${mode==='dare'?'오늘의 도전':mode==='task'?'미루던 일 (아주 작게 쪼갠 첫 단계)':'해볼 활동'}</label><input type="text" id="pn" placeholder="${C.ph}"></div>
 ${sug?`<div class="chips">${sug.map(s=>`<button class="chip" data-ps="${esc(s)}">${esc(s)}</button>`).join('')}</div>`:''}
 ${mode==='joy'?`<div class="chips">${['혼자','함께'].map(w=>`<button class="chip${who===w?' on':''}" data-pw="${w}">${w}</button>`).join('')}</div>`:''}
 ${rng('pp',50,C.pl+' (0~100)')}${C.pl2?rng('pp2',50,C.pl2+' (0~100)'):''}
@@ -949,7 +959,9 @@ ${C.pl2?`<div class="row"><span>${C.pl2.replace('예상 ','')}</span><div class=
 :open===x.id?`${rng('pa',x.p,C.al)}${C.pl2?rng('pa2',x.p2,C.al2):''}<div class="controls" style="justify-content:flex-start"><button class="btn primary sm" data-psave="${x.id}">결과 저장</button></div>`
 :`<small>${C.pl} ${x.p}${C.pl2?' · '+C.pl2+' '+x.p2:''}</small><div class="controls" style="justify-content:flex-start"><button class="btn sm" data-popen="${x.id}">해봤어요 · 결과 입력</button><button class="btn sm" data-pdel="${x.id}">삭제</button></div>`}</div>`;}).join('')}</div>
 <div class="pill"><i style="background:var(--ochre)"></i>예상 <i style="background:var(--moss)"></i>실제</div>${summary()}`);$('sheet').scrollTop=y;}
-$('sheetIn').onclick=e=>{let b=e.target.closest('[data-ps]');if(b){$('pn').value=b.dataset.ps;return;}
+$('sheetIn').onclick=e=>{if(e.target.id==='socUse'){const v=val('sq1').trim();if(!v){G.toast('첫 번째 단계를 먼저 적어 주세요');return;}$('pn').value=v;$('pn').scrollIntoView({block:'center'});$('pn').focus({preventScroll:true});return;}
+if(e.target.id==='socSave'){socRead();const p=SQ.map((q,i)=>[q[0],soc[i].trim()]).filter(x=>x[1]);if(!p.length){G.toast('한 칸 이상 적어 주세요');return;}addNote(35,'미루지 않기 · 소크라테스 점검',p);soc=SQ.map(()=>'');socOpen=false;draw();return;}
+let b=e.target.closest('[data-ps]');if(b){$('pn').value=b.dataset.ps;return;}
 b=e.target.closest('[data-pw]');if(b){who=b.dataset.pw;$('sheetIn').querySelectorAll('[data-pw]').forEach(c=>c.classList.toggle('on',c.dataset.pw===who));return;}
 if(e.target.id==='padd'){const n=val('pn').trim();if(!n){G.toast('무엇을 할지 적어 주세요');return;}M.preds.unshift({id:uid(),ts:Date.now(),mode,n:t.n,name:n,who:mode==='joy'?who:null,p:+val('pp'),p2:C.pl2?+val('pp2'):null,a:null});save();draw();G.toast('예측을 기록했습니다. 해본 뒤 결과를 입력하세요');return;}
 b=e.target.closest('[data-popen]');if(b){open=b.dataset.popen;draw();return;}
