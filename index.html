@@ -267,6 +267,7 @@ select{font:inherit;color:var(--ink);background:var(--surface);border:1px solid 
 .eg{display:flex;flex-direction:column;align-items:flex-start;gap:1px;text-align:left;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:8px 10px}
 .eg b{font-size:14px}.eg span{font-size:11px;color:var(--muted);line-height:1.35}
 .eg.on{background:var(--moss-soft);border-color:var(--moss)}.eg.on b{color:var(--moss)}
+.resume{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 12px;border-radius:12px;background:var(--card,rgba(0,0,0,.04));font-size:13px;color:var(--muted)}
 .rfc{gap:8px}.rfh{display:flex;justify-content:space-between;align-items:baseline}.rfh b{font-family:var(--serif);font-size:17px}.rfh .num{color:var(--ochre);font-size:14px}
 .aibtns{display:flex;flex-direction:column;gap:8px}
 .aibtns .btn{width:100%}
@@ -627,6 +628,11 @@ const KEY='goyo-mind';
 let M={entries:[],preds:[],counts:{},notes:[]};
 try{const s=localStorage.getItem(KEY);if(s)M=Object.assign(M,JSON.parse(s)||{});}catch(e){}
 function save(){try{localStorage.setItem(KEY,JSON.stringify(M));}catch(e){}}
+const DK='goyo-mind-draft';let flushDraft=null;
+function dGet(k){try{const d=JSON.parse(localStorage.getItem(DK)||'{}');return k?d[k]:d;}catch(e){return k?null:{};}}
+function dSet(k,v){try{const d=dGet();if(v==null)delete d[k];else d[k]=v;localStorage.setItem(DK,JSON.stringify(d));}catch(e){}}
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='hidden'&&flushDraft)flushDraft();});
+window.addEventListener('pagehide',()=>{if(flushDraft)flushDraft();});
 const tday=()=>G.ymd(new Date());
 const md=ts=>{const d=new Date(ts);return (d.getMonth()+1)+'/'+d.getDate();};
 
@@ -779,7 +785,12 @@ if(k==='decide')return decide(t);if(k==='joy'||k==='task'||k==='dare')return pre
 function generic(t){
 sheet(`${t.n}번 · ${CATS[t.c]}`,esc(t.t),esc(t.d),`<div class="block" style="gap:14px">${t.q.map((q,i)=>`<div class="field"><label for="gq${i}">${esc(q)}</label><textarea id="gq${i}"></textarea></div>`).join('')}</div>
 <div class="finish"><button class="btn primary" id="gsave">기록 저장</button></div>`);
-$('gsave').onclick=()=>{const p=t.q.map((q,i)=>[q,val('gq'+i).trim()]).filter(x=>x[1]);if(!p.length){G.toast('한 칸 이상 적어 주세요');return;}addNote(t.n,t.t,p);G.close();};}
+const dk='g'+t.n,old=dGet(dk);if(old&&old.v)old.v.forEach((x,i)=>{if($('gq'+i))$('gq'+i).value=x||'';});
+const gv=()=>t.q.map((_,i)=>$('gq'+i)?val('gq'+i):'');let alive=true,tm=null;
+const fl=()=>{if(!alive||!$('gsave'))return;clearTimeout(tm);const v=gv();dSet(dk,v.some(x=>x.trim())?{ts:Date.now(),v}:null);};
+flushDraft=fl;$('sheetIn').oninput=()=>{clearTimeout(tm);tm=setTimeout(fl,400);};
+G.cleanup(()=>{fl();alive=false;if(flushDraft===fl)flushDraft=null;});
+$('gsave').onclick=()=>{const p=t.q.map((q,i)=>[q,val('gq'+i).trim()]).filter(x=>x[1]);if(!p.length){G.toast('한 칸 이상 적어 주세요');return;}alive=false;dSet(dk,null);addNote(t.n,t.t,p);G.close();};}
 
 /* ---------- counter ---------- */
 function counterHTML(){
@@ -1029,7 +1040,11 @@ function aiCardHTML(){const on=!!AI.key;return `<details class="card"${on?'':' o
 <p class="hint" style="margin:0">키는 이 폰에만 저장되고 GitHub 코드에는 들어가지 않습니다. AI 가이드를 누를 때만 일지 내용이 Anthropic으로 전송되며, 사용량만큼 요금이 부과됩니다. 키는 console.anthropic.com에서 만들 수 있어요. 키 없이도 일지 화면의 <b>Claude 앱에서 물어보기</b>로 구독을 써서 물어볼 수 있습니다.</p></details>`;}
 function wizard(){
 const S={step:0,sit:'',emo:{},thought:'',b0:80,r1:'',r2:'',tgt:{},dist:[],tech:null,ans:[],pos:'',posB:80,b1:null,now:{},rf:{},ai:{turns:[],last:null,loading:false,err:''}};
-let lastStep=-1;
+let lastStep=-1,alive=true,dtm=null,resumed=false;
+{const d=dGet('wiz');if(d&&d.S&&Date.now()-d.ts<14*864e5){const ai=S.ai;Object.assign(S,d.S);S.ai=Object.assign(ai,{last:d.S.ai&&d.S.ai.last||null,turns:d.S.ai&&d.S.ai.turns||[]});resumed=true;}}
+function persist(){if(!alive||$('sheet').hidden||!/^생각 하나 풀어보기/.test(($('sheetIn').querySelector('.eyebrow')||{}).textContent||''))return;clearTimeout(dtm);try{read();}catch(e){}
+const x=Object.assign({},S,{ai:{last:S.ai.last,turns:S.ai.turns}});
+const empty=!S.sit.trim()&&!Object.keys(S.emo).length&&!S.thought.trim()&&S.step===0;dSet('wiz',empty?null:{ts:Date.now(),S:x});}
 const STEPN=['상황','감정','생각','긍정적 재구성','왜곡 찾기','새 생각 (직설 기법)','결과'];
 function wState(){const ek=Object.keys(S.emo);return `현재 기분 일지 (지금 단계: ${STEPN[S.step]})
 상황: ${S.sit||'-'}
@@ -1167,6 +1182,7 @@ const q=(t,h)=>`<div class="q">${t}</div>${h?`<p class="sub" style="margin:0">${
 function draw(){const s=S.step;const ek=Object.keys(S.emo);
 $('sheetIn').querySelector('h2').textContent=STEPS[s];$('sheetIn').querySelector('.eyebrow').textContent=`생각 하나 풀어보기 · ${s+1}/${STEPS.length}`;
 let h=`<div class="dots">${STEPS.map((_,i)=>`<i class="${i<=s?'on':''}"></i>`).join('')}</div>`;
+if(resumed)h+=`<div class="resume"><span>쓰던 일지를 이어서 불러왔어요</span><button class="btn sm" id="wfresh">새로 쓰기</button></div>`;
 if(s===0)h+=`${q('지금 무엇 때문에 마음이 불편한가요?','한두 문장이면 충분합니다. 사실만 적어 보세요.')}<textarea id="ws" style="min-height:110px" placeholder="예: 수업 준비를 못 해서 학생 앞에서 버벅였다">${esc(S.sit)}</textarea>`;
 if(s===1)h+=`${q('어떤 감정이 드나요?','해당하는 감정군을 모두 고르고, 강도를 매겨 보세요. 목록에 없으면 기타에 직접 적으세요.')}<div class="emog" id="emoChips">${EMO_G.map(([e,sub])=>`<button class="eg${e in S.emo?' on':''}" data-emo="${e}"><b>${e}</b><span>${sub}</span></button>`).join('')}${Object.keys(S.emo).filter(k=>!EMO.includes(k)).map(k=>`<button class="eg on" data-emo="${esc(k)}"><b>${esc(k)}</b><span>기타</span></button>`).join('')}</div>
 <div class="addrow"><input type="text" id="emoNew" placeholder="기타 감정 직접 적기 (예: 질투, 허탈함)"><button class="btn sm" data-emoadd>추가</button></div><div id="emoRs" class="block">${emoRs()}</div>`;
@@ -1199,19 +1215,23 @@ ${ek.map(k=>`<div class="row"><span>${k}</span><div class="bars"><i class="b0" s
 h+=aiPanel();
 h+=`<div class="aibtns">${s<6?`<button class="btn ai" id="wlocal">✦ 자동 가이드 받기 (무료)</button>`:''}${s<6&&AI.key?`<button class="btn ai" id="wai"${S.ai.loading?' disabled':''}>✦ AI 가이드${S.ai.last&&!S.ai.last.local?' 다시 받기':' 받기'}</button>`:''}<button class="btn" id="wclaude">Claude 앱에서 물어보기 (구독)</button></div>`;
 h+=`<div class="finish">${s===6?`<button class="btn primary" id="wsave">저장하고 닫기</button><button class="btn" id="wmore">다른 기법 더 해보기</button>`:`<button class="btn primary" id="wnext">${s===5?'결과 보기':'다음'}</button>${s?'<button class="btn" id="wprev">이전</button>':''}`}</div>`;
-body(h,s!==lastStep);lastStep=s;
+body(h,s!==lastStep);if(lastStep>=0&&s!==lastStep)resumed=false;lastStep=s;persist();
 if($('wnext'))$('wnext').onclick=next;if($('wprev'))$('wprev').onclick=()=>{read();S.step--;draw();};
 if($('wmore'))$('wmore').onclick=()=>{S.step=5;S.techOpen=true;draw();};
 if($('wsave'))$('wsave').onclick=()=>{const t=S.tech?byN(S.tech):null;
 M.entries.unshift({id:uid(),ts:Date.now(),sit:S.sit,thought:S.thought,b0:S.b0,b1:S.b1,pos:S.pos,posB:S.posB,dist:S.dist,
 emo:Object.fromEntries(Object.keys(S.emo).map(k=>[k,[S.emo[k],S.tgt[k]!=null?S.tgt[k]:null,S.now[k]]])),reframe:[S.r1,S.r2],tech:S.tech,techAns:t?techQ().map((x,i)=>[x,S.ans[i]||'']).filter(x=>x[1]):[]});
-save();renderMind();G.close();G.toast('생각 일지에 저장했습니다');};}
+alive=false;dSet('wiz',null);save();renderMind();G.close();G.toast('생각 일지에 저장했습니다');};}
 function next(){read();const s=S.step;
 if(s===1&&!Object.keys(S.emo).length){G.toast('감정을 하나 이상 골라 주세요');return;}
 if(s===2&&!S.thought.trim()){G.toast('생각을 적어 주세요');return;}
 if(s===5&&!S.pos.trim()){G.toast('새 생각을 적어 주세요');return;}
 S.step++;draw();}
-$('sheetIn').onclick=e=>{if(e.target.id==='wai'){aiAsk();return;}
+flushDraft=persist;G.cleanup(()=>{persist();alive=false;if(flushDraft===persist)flushDraft=null;renderMind();});
+$('sheetIn').oninput=()=>{clearTimeout(dtm);dtm=setTimeout(persist,400);};
+$('sheetIn').onchange=()=>persist();
+$('sheetIn').onclick=e=>{if(e.target.id==='wfresh'){if(!e.target.dataset.arm){e.target.dataset.arm=1;e.target.textContent='한 번 더 누르면 지워져요';return;}alive=false;dSet('wiz',null);wizard();return;}
+if(e.target.id==='wai'){aiAsk();return;}
 if(e.target.id==='wlocal'){const g=localGuide();if(!g){G.toast('상황이나 생각을 먼저 조금 적어 주세요');return;}S.ai.last=g;S.ai.err='';S.ai.copy='';draw();setTimeout(()=>{const b=$('sheetIn').querySelector('.aibox');if(b)b.scrollIntoView({behavior:'smooth',block:'start'});},50);return;}
 if(e.target.id==='wclaude'){toClaude();return;}
 if(e.target.closest('[data-aicopysel]')){const t=$('aiCopy');t.focus();t.select();try{document.execCommand('copy');G.toast('복사했어요');}catch(err){}return;}
@@ -1242,7 +1262,7 @@ function renderMind(){const root=$('mindRoot');if(!root)return;
 const e=M.entries,drop=e.length?Math.round(e.reduce((s,x)=>s+(x.b0-x.b1),0)/e.length):0;
 const lib=T.filter(t=>cat==='all'||t.c===cat);
 root.innerHTML=`<div class="focus"><div class="eyebrow">왜곡된 생각을 바로잡는 50가지 방법</div><h2>마음 도구</h2><p>기분은 생각에서 옵니다. 괴로운 생각 하나를 붙잡아 사실인지 따져 보고, 더 현실적인 생각으로 바꿔 봅니다.</p></div>
-<button class="hero" data-mwiz><span class="eyebrow" style="color:inherit;opacity:.8">5~10분 · 기분 일지</span><b>생각 하나 풀어보기</b><span>상황 → 감정 → 생각 → 재구성 → 왜곡 찾기 → 기법 → 새 생각</span><span class="go">시작</span></button>
+<button class="hero" data-mwiz><span class="eyebrow" style="color:inherit;opacity:.8">5~10분 · 기분 일지</span><b>생각 하나 풀어보기</b><span>상황 → 감정 → 생각 → 재구성 → 왜곡 찾기 → 기법 → 새 생각</span><span class="go">${dGet('wiz')?'이어 쓰기':'시작'}</span></button>
 ${counterHTML()}
 ${aiCardHTML()}
 <div class="sec-h"><h3>바로 쓰는 도구</h3><span>눌러서 시작</span></div>
