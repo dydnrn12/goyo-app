@@ -267,6 +267,7 @@ select{font:inherit;color:var(--ink);background:var(--surface);border:1px solid 
 .eg{display:flex;flex-direction:column;align-items:flex-start;gap:1px;text-align:left;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:8px 10px}
 .eg b{font-size:14px}.eg span{font-size:11px;color:var(--muted);line-height:1.35}
 .eg.on{background:var(--moss-soft);border-color:var(--moss)}.eg.on b{color:var(--moss)}
+.rfc{gap:8px}.rfh{display:flex;justify-content:space-between;align-items:baseline}.rfh b{font-family:var(--serif);font-size:17px}.rfh .num{color:var(--ochre);font-size:14px}
 .aibtns{display:flex;flex-direction:column;gap:8px}
 .aibtns .btn{width:100%}
 .sheet{overscroll-behavior:contain}.sheet,.sheet *{overflow-anchor:none}
@@ -1027,7 +1028,7 @@ function aiCardHTML(){const on=!!AI.key;return `<details class="card"${on?'':' o
 <div class="controls" style="justify-content:flex-start"><button class="btn sm primary" data-aisave>저장</button>${on?'<button class="btn sm" data-aidel>키 삭제</button>':''}</div>
 <p class="hint" style="margin:0">키는 이 폰에만 저장되고 GitHub 코드에는 들어가지 않습니다. AI 가이드를 누를 때만 일지 내용이 Anthropic으로 전송되며, 사용량만큼 요금이 부과됩니다. 키는 console.anthropic.com에서 만들 수 있어요. 키 없이도 일지 화면의 <b>Claude 앱에서 물어보기</b>로 구독을 써서 물어볼 수 있습니다.</p></details>`;}
 function wizard(){
-const S={step:0,sit:'',emo:{},thought:'',b0:80,r1:'',r2:'',tgt:{},dist:[],tech:null,ans:[],pos:'',posB:80,b1:null,now:{},ai:{turns:[],last:null,loading:false,err:''}};
+const S={step:0,sit:'',emo:{},thought:'',b0:80,r1:'',r2:'',tgt:{},dist:[],tech:null,ans:[],pos:'',posB:80,b1:null,now:{},rf:{},ai:{turns:[],last:null,loading:false,err:''}};
 let lastStep=-1;
 const STEPN=['상황','감정','생각','긍정적 재구성','왜곡 찾기','새 생각 (직설 기법)','결과'];
 function wState(){const ek=Object.keys(S.emo);return `현재 기분 일지 (지금 단계: ${STEPN[S.step]})
@@ -1152,7 +1153,7 @@ function read(){const s=S.step;
 if(s===0)S.sit=val('ws');
 if(s===1)Object.keys(S.emo).forEach((k,i)=>{S.emo[k]=+val('we'+i);});
 if(s===2){S.thought=val('wt');S.b0=+val('wb0');}
-if(s===3){S.r1=val('wr1');S.r2=val('wr2');Object.keys(S.emo).forEach((k,i)=>{S.tgt[k]=+val('wg'+i);});}
+if(s===3){Object.keys(S.emo).forEach((k,i)=>{S.rf[k]=[val('wf'+i+'a'),val('wf'+i+'b')];S.tgt[k]=+val('wg'+i);});const ks=Object.keys(S.rf).filter(k=>k in S.emo);S.r1=ks.filter(k=>S.rf[k][0].trim()).map(k=>k+': '+S.rf[k][0].trim()).join(' / ');S.r2=ks.filter(k=>S.rf[k][1].trim()).map(k=>k+': '+S.rf[k][1].trim()).join(' / ');}
 if(s===5&&S.tech&&$('wa0'))S.ans=techQ().map((_,i)=>val('wa'+i));
 if(s===5&&$('techBox'))S.techOpen=$('techBox').open;
 if(s===5){S.pos=val('wp');S.posB=+val('wpb');S.b1=+val('wb1');Object.keys(S.emo).forEach((k,i)=>{S.now[k]=+val('wn'+i);});}}
@@ -1170,11 +1171,14 @@ if(s===0)h+=`${q('지금 무엇 때문에 마음이 불편한가요?','한두 �
 if(s===1)h+=`${q('어떤 감정이 드나요?','해당하는 감정군을 모두 고르고, 강도를 매겨 보세요. 목록에 없으면 기타에 직접 적으세요.')}<div class="emog" id="emoChips">${EMO_G.map(([e,sub])=>`<button class="eg${e in S.emo?' on':''}" data-emo="${e}"><b>${e}</b><span>${sub}</span></button>`).join('')}${Object.keys(S.emo).filter(k=>!EMO.includes(k)).map(k=>`<button class="eg on" data-emo="${esc(k)}"><b>${esc(k)}</b><span>기타</span></button>`).join('')}</div>
 <div class="addrow"><input type="text" id="emoNew" placeholder="기타 감정 직접 적기 (예: 질투, 허탈함)"><button class="btn sm" data-emoadd>추가</button></div><div id="emoRs" class="block">${emoRs()}</div>`;
 if(s===2)h+=`${q('그 순간 머릿속에 스친 생각은?','머릿속 말 그대로, "나는 ~" 형태로 적어 보세요.')}<textarea id="wt" style="min-height:90px" placeholder="예: 나는 선생 자격이 없어">${esc(S.thought)}</textarea>${rng('wb0',S.b0,'이 생각을 지금 얼마나 믿나요? (%)')}`;
-if(s===3)h+=`${q('1번 긍정적 재구성','이 감정을 없애기 전에, 이 감정이 지켜주는 것부터 봅니다.')}
-<div class="field"><label for="wr1">이 생각이나 감정이 나에게 주는 이점은?</label><textarea id="wr1" placeholder="예: 다음 수업은 더 철저히 준비하게 만든다">${esc(S.r1)}</textarea></div>
-<div class="field"><label for="wr2">이 감정은 나의 어떤 좋은 가치를 보여주나요?</label><textarea id="wr2">${esc(S.r2)}</textarea></div>
-<div class="chips">${VALUES.map(v=>`<button class="chip" data-val="${v}">+ ${v}</button>`).join('')}</div>
-${ek.length?`${q('2번 마법 다이얼','좋은 점은 남기고, 어디까지 낮추면 충분할까요?')}${ek.map((k,i)=>rng('wg'+i,S.tgt[k]!=null?S.tgt[k]:Math.round(S.emo[k]/2/5)*5,`${k}: 지금 ${S.emo[k]} → 목표`)).join('')}`:''}`;
+if(s===3){const th=S.thought.trim();h+=`${q('1번 긍정적 재구성 · 2번 마법 다이얼','감정마다 이 감정이 지켜주는 것을 먼저 찾고, 그다음 몇 %까지만 낮출지 정합니다.')}
+${ek.map((k,i)=>{const rf=S.rf[k]||['',''];const sug=LG_EMO[k]?LG_EMO[k][0]:'';const cur=S.tgt[k]!=null?S.tgt[k]:Math.round(S.emo[k]/2/5)*5;
+return `<div class="card rfc"><div class="rfh"><b>${esc(k)}</b><span class="num">${S.emo[k]}%</span></div>
+${th?`<div class="bubble"><small>이 감정에 딸린 생각</small>${esc(th)}</div>`:''}
+<div class="field"><label for="wf${i}a">이 ${esc(jo(k,'이','가'))} 나에게 주는 이점은?</label><textarea id="wf${i}a" style="min-height:56px" placeholder="예: 다음엔 더 철저히 준비하게 만든다">${esc(rf[0])}</textarea></div>
+<div class="field"><label for="wf${i}b">이 ${esc(jo(k,'이','가'))} 보여주는 나의 좋은 가치는?</label><textarea id="wf${i}b" style="min-height:56px">${esc(rf[1])}</textarea></div>
+<div class="chips">${[...new Set([sug].concat(VALUES).filter(Boolean))].slice(0,6).map(v=>`<button class="chip" data-val="${i}|${esc(v)}">+ ${esc(v)}</button>`).join('')}</div>
+${rng('wg'+i,cur,`마법 다이얼: ${esc(k)} 지금 ${S.emo[k]}% → 목표`)}</div>`;}).join('')}`;}
 if(s===4)h+=`<div class="bubble"><small>나의 생각</small>${esc(S.thought)}</div>${q('이 생각에 어떤 왜곡이 들어 있나요?','해당하는 것을 가볍게 체크하세요. 잘 모르겠으면 건너뛰어도 됩니다.')}
 <div class="dlist">${DIST.map(d=>`<button class="dist${S.dist.includes(d[0])?' on':''}" data-dist="${d[0]}"><b>${d[1]}</b><span>${d[2]}</span></button>`).join('')}</div>`;
 if(s===5){const r=recs();h+=`<div class="bubble"><small>처음 생각 · 믿음 ${S.b0}%</small>${esc(S.thought)}</div>
@@ -1219,7 +1223,7 @@ if(e.target.closest('[data-emoadd]')){const v=val('emoNew').trim().slice(0,12);i
 let b=e.target.closest('[data-emo]');if(b){read();const k=b.dataset.emo;if(k in S.emo)delete S.emo[k];else S.emo[k]=60;b.classList.toggle('on',k in S.emo);const y=$('sheet').scrollTop;$('emoRs').innerHTML=emoRs();$('sheet').scrollTop=y;return;}
 b=e.target.closest('[data-dist]');if(b){const k=b.dataset.dist;S.dist=S.dist.includes(k)?S.dist.filter(x=>x!==k):S.dist.concat(k);b.classList.toggle('on');return;}
 b=e.target.closest('[data-wt]');if(b){read();const n=+b.dataset.wt;if(S.tech!==n){S.tech=n;S.ans=[];}$('sheetIn').querySelectorAll('[data-wt]').forEach(c=>c.classList.toggle('on',+c.dataset.wt===n));const y=$('sheet').scrollTop;$('wtCard').innerHTML=techCard();$('sheet').scrollTop=y;return;}
-b=e.target.closest('[data-val]');if(b){const ta=$('wr2');ta.value=(ta.value.trim()?ta.value.trim()+', ':'')+b.dataset.val;}};
+b=e.target.closest('[data-val]');if(b){const x=b.dataset.val.indexOf('|');const ta=$('wf'+b.dataset.val.slice(0,x)+'b');const v=b.dataset.val.slice(x+1);if(ta)ta.value=(ta.value.trim()?ta.value.trim()+', ':'')+v;}};
 draw();}
 
 /* ---------- view ---------- */
@@ -1273,6 +1277,11 @@ b=ev.target.closest('[data-jdel]');if(b){if(!b.dataset.arm){b.dataset.arm=1;b.te
 const[k,id]=b.dataset.jdel.split(':');if(k==='e')M.entries=M.entries.filter(x=>x.id!==id);else M.notes=M.notes.filter(x=>x.id!==id);save();renderMind();}
 });
 $('sheetIn').addEventListener('click',ev=>{const b=ev.target.closest('[data-cnt]');if(b)bump(+b.dataset.cnt);});
+{const sh=$('sheet');let lockY=0,lockUntil=0;
+const lock=e=>{if(e.target&&e.target.type==='range'){lockY=sh.scrollTop;lockUntil=Date.now()+900;const a=document.activeElement;if(a&&a!==e.target&&/^(TEXTAREA|INPUT)$/.test(a.tagName)&&a.type!=='range')a.blur();}};
+sh.addEventListener('pointerdown',lock,true);sh.addEventListener('touchstart',lock,{capture:true,passive:true});
+const hold=()=>{if(Date.now()<lockUntil&&Math.abs(sh.scrollTop-lockY)>2)sh.scrollTop=lockY;};
+sh.addEventListener('scroll',hold);if(window.visualViewport)visualViewport.addEventListener('resize',()=>{hold();requestAnimationFrame(hold);});}
 $('sheetIn').addEventListener('input',e=>{if(e.target.type==='range'){const o=$(e.target.id+'o');if(o)o.textContent=e.target.value;}});
 renderMind();
 })();
